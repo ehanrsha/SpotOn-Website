@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpotOn — Making parking infinite.</title>
+  <style>
+    /* ─── Fonts ─────────────────────────────────────────────── */
+    @font-face {
+      font-family: 'Switzer';
+      src: url('Fonts/Switzer-Light.ttf') format('truetype');
+      font-weight: 300;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Switzer';
+      src: url('Fonts/Switzer-Semibold.ttf') format('truetype');
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    /* ─── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Switzer', sans-serif;
+      font-weight: 300;
+      overflow: hidden;
+    }
+
+    /* ─── Desktop Grid ───────────────────────────────────────── */
+    /*
+      Row 1 (auto) : nav         | phone (spans) | —
+      Row 2 (1fr)  : tagline     | phone (spans) | desc + btn
+      The bottoms of tagline and desc+btn are pinned to the same
+      padding-bottom, so they land at the same horizontal line.
+    */
+    .site {
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-rows: auto 1fr;
+      overflow: hidden;
+    }
+
+    /* ─── Branding ───────────────────────────────────────────── */
+    .nav {
+      grid-column: 1;
+      grid-row: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: clamp(20px, 3vh, 40px) 0 0 clamp(20px, 3vw, 48px);
+      opacity: 0;
+      animation: blurUp 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.05s forwards;
+    }
+
+    .nav-icon {
+      width: clamp(28px, 2.4vw, 40px);
+      height: clamp(28px, 2.4vw, 40px);
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .nav-name {
+      font-size: clamp(16px, 1.5vw, 22px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    /* ─── Tagline ────────────────────────────────────────────── */
+    .left {
+      grid-column: 1;
+      grid-row: 2;
+      display: flex;
+      align-items: flex-end;               /* pin to bottom of row   */
+      padding: 0 0 clamp(72px, 16vh, 150px) clamp(20px, 3vw, 48px);
+      opacity: 0;
+      animation: blurUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.35s forwards;
+    }
+
+    .tagline {
+      font-size: clamp(26px, 4vw, 68px);
+      font-weight: 300;
+      line-height: 1.06;
+      letter-spacing: -0.025em;
+    }
+
+    .tagline em {
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* ─── Phone (centre, spans both rows) ───────────────────── */
+    .phone-col {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(32px, 5vh, 80px) clamp(32px, 3.5vw, 72px);
+    }
+
+    .phone-inner {
+      opacity: 0;
+      animation: phoneRise 1.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
+      will-change: transform;
+    }
+
+    .phone-img {
+      display: block;
+      width: clamp(180px, 20vw, 340px);
+      border-radius: clamp(18px, 2vw, 36px);
+      box-shadow:
+        0 64px 128px rgba(0,0,0,0.65),
+        0 24px 48px rgba(0,0,0,0.45);
+    }
+
+    /* ─── Right: description + download ─────────────────────── */
+    /*
+      Lives in row 2 only — same row as the tagline.
+      justify-content: flex-end pushes the group to the bottom
+      of the row, and the same padding-bottom makes the Download
+      button's bottom sit exactly level with the tagline's bottom.
+    */
+    .right {
+      grid-column: 3;
+      grid-row: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;           /* bottom-align the group */
+      gap: clamp(16px, 2.5vh, 28px);
+      padding: 0 clamp(20px, 3vw, 64px) clamp(72px, 16vh, 150px) 0;
+    }
+
+    .description {
+      font-size: clamp(13px, 1.05vw, 18px);
+      font-weight: 300;
+      line-height: 1.72;
+      color: rgba(255, 255, 255, 0.75);
+      opacity: 0;
+      animation: blurUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.65s forwards;
+    }
+
+    /* ─── Download Button (desktop) ──────────────────────────── */
+    .dl-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #fff;
+      color: #000;
+      border: none;
+      outline: none;
+      border-radius: 999px;
+      padding: clamp(12px, 1.2vh, 18px) clamp(20px, 1.8vw, 32px);
+      font-family: 'Switzer', sans-serif;
+      font-weight: 300;
+      font-size: clamp(13px, 0.95vw, 16px);
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      cursor: pointer;
+      text-decoration: none;
+      width: fit-content;
+      opacity: 0;
+      animation: blurUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.85s forwards;
+      transition:
+        transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+      will-change: transform;
+    }
+
+    .dl-btn:hover {
+      transform: translateY(-7px) scale(1.04);
+      box-shadow: 0 22px 44px rgba(255, 255, 255, 0.18);
+    }
+
+    .dl-btn:active {
+      transform: translateY(-2px) scale(1.01);
+      transition-duration: 0.2s;
+    }
+
+    .dl-btn svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .dl-btn__label {
+      display: inline;
+    }
+
+    .dl-btn strong {
+      font-weight: 600;
+    }
+
+    /* ─── Keyframes ──────────────────────────────────────────── */
+    @keyframes phoneRise {
+      0%   { opacity: 0; transform: translateY(90px) scale(0.88); }
+      100% { opacity: 1; transform: translateY(0px)  scale(1);    }
+    }
+
+    @keyframes blurUp {
+      0%   { opacity: 0; filter: blur(12px); transform: translateY(12px); }
+      100% { opacity: 1; filter: blur(0px);  transform: translateY(0px);  }
+    }
+
+    /* ─── Mobile Layout ──────────────────────────────────────── */
+    @media (max-width: 768px) {
+      body {
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .site {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        /* leave room at bottom for the fixed download button */
+        padding-bottom: 90px;
+        overflow: visible;
+      }
+
+      /* order: nav → tagline → description → phone */
+      .nav      { order: 1; grid-column: unset; grid-row: unset; padding: 28px 24px 0; }
+      .left     { order: 2; grid-column: unset; grid-row: unset; align-items: flex-start; padding: 36px 24px 0; }
+      .right    { order: 3; grid-column: unset; grid-row: unset; justify-content: flex-start; padding: 28px 24px 0; gap: 0; }
+      .phone-col{ order: 4; grid-column: unset; grid-row: unset; padding: 36px 24px 0; }
+
+      /* hide the desktop button, show only mobile */
+      .dl-btn--desktop { display: none !important; }
+      .dl-btn--mobile  { display: inline-flex !important; }
+
+      .tagline {
+        font-size: clamp(34px, 10vw, 58px);
+      }
+
+      .description {
+        font-size: clamp(15px, 4vw, 20px);
+        line-height: 1.65;
+      }
+
+      .phone-inner {
+        animation: phoneRiseMobile 1.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
+      }
+
+      .phone-img {
+        width: clamp(220px, 76vw, 380px);
+        border-radius: clamp(20px, 5vw, 40px);
+      }
+    }
+
+    /* ─── Mobile: fixed bottom download button ───────────────── */
+    /*
+      Pinned 10px above the bottom of the viewport, fills 80 % of
+      screen width, text on a single line.
+    */
+    .dl-btn--mobile {
+      /* hidden by default; shown inside the @media block above */
+      display: none;
+      position: fixed;
+      bottom: 14px;
+      left: 10vw;             /* 10% margin each side = 80% width */
+      right: 10vw;
+      width: auto;
+      max-width: none;
+      font-size: clamp(13px, 3.6vw, 16px);
+      padding: 12px 20px;     /* thinner button */
+      white-space: nowrap;
+      gap: 6px;               /* tighter gap between text and arrow */
+      transition:
+        transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .dl-btn--mobile:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 18px 36px rgba(255, 255, 255, 0.18);
+    }
+
+    .dl-btn--mobile:active {
+      transform: translateY(-2px) scale(1.01);
+      transition-duration: 0.2s;
+    }
+
+    @keyframes phoneRiseMobile {
+      0%   { opacity: 0; transform: translateY(70px) scale(0.9); }
+      100% { opacity: 1; transform: translateY(0)    scale(1);   }
+    }
+
+    /* ─── Very wide screens ──────────────────────────────────── */
+    @media (min-width: 1600px) {
+      .site {
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site">
+
+    <!-- ── Branding ─────────────────────────────────────────── -->
+    <!--
+      Spaces in filenames must be %-encoded so the browser
+      resolves the URL correctly across all environments.
+    -->
+    <nav class="nav">
+      <img class="nav-icon" src="assets/spoton-logo.png" alt="SpotOn">
+      <span class="nav-name">SpotOn</span>
+    </nav>
+
+    <!-- ── Tagline ──────────────────────────────────────────── -->
+    <div class="left">
+      <h1 class="tagline">Making <em>parking</em><br>infinite.</h1>
+    </div>
+
+    <!-- ── Phone Mockup ─────────────────────────────────────── -->
+    <div class="phone-col">
+      <div class="phone-inner">
+        <img
+          class="phone-img"
+          src="assets/phone-placeholder.jpg"
+          alt="SpotOn app interface"
+        >
+      </div>
+    </div>
+
+    <!-- ── Right: copy + download ───────────────────────────── -->
+    <div class="right">
+      <p class="description">
+        Get paid to list your front driveway,<br>
+        and find spots anywhere in the world.<br>
+        That's how we believe parking<br>
+        should work.
+      </p>
+
+      <!-- Desktop pill button (hidden on mobile via CSS) -->
+      <a href="#" class="dl-btn dl-btn--desktop" aria-label="Download SpotOn">
+        Download Now
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+
+  <!--
+    Mobile download button lives outside .site so it's a direct
+    child of <body> and position:fixed works without interference.
+  -->
+  <a href="#" class="dl-btn dl-btn--mobile" aria-label="Download SpotOn app">
+    <span class="dl-btn__label">Download The <strong>SpotOn</strong> App</span>
+    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+    </svg>
+  </a>
+
+</body>
+</html>
