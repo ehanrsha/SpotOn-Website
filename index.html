@@ -105,11 +105,24 @@
       height: clamp(28px, 2.4vw, 40px);
       border-radius: 50%;
       object-fit: cover;
+      transition:
+        box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .nav-name {
       font-size: clamp(16px, 1.5vw, 22px);
       font-weight: 600;
       letter-spacing: -0.02em;
+      transition: text-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav:hover .nav-icon {
+      filter: brightness(1.08);
+      box-shadow: 0 22px 44px rgba(255, 255, 255, 0.18);
+    }
+    .nav:hover .nav-name {
+      text-shadow:
+        0 10px 24px rgba(255, 255, 255, 0.24),
+        0 22px 44px rgba(255, 255, 255, 0.18);
     }
 
     /* ── Tagline (left column, bottom-aligned) ────────────────── */
@@ -129,7 +142,21 @@
       line-height: 1.06;
       letter-spacing: -0.025em;
     }
-    .tagline em { font-style: normal; font-weight: 600; }
+    .tagline em {
+      border-radius: 0.16em;
+      cursor: default;
+      font-style: normal;
+      font-weight: 600;
+      transition:
+        text-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .tagline em:hover {
+      filter: brightness(1.08);
+      text-shadow:
+        0 10px 24px rgba(255, 255, 255, 0.24),
+        0 22px 44px rgba(255, 255, 255, 0.18);
+    }
 
     /* ── Phone column (centre, spans both rows, bottom-anchored) ─
        align-self: end pins the phone to the bottom of the 100vh
@@ -314,8 +341,90 @@
     .dl-btn--mobile:hover  { transform: translateY(-6px) scale(1.02); box-shadow: 0 18px 36px rgba(255, 255, 255, 0.18); }
     .dl-btn--mobile:active { transform: translateY(-2px) scale(1.01); transition-duration: 0.2s; }
 
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: transparent;
+      border: 0;
+      color: #fff;
+      cursor: pointer;
+      padding: 0;
+    }
+    .menu-toggle span {
+      position: relative;
+      width: 24px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 999px;
+    }
+    .menu-toggle span::before,
+    .menu-toggle span::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 24px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 999px;
+    }
+    .menu-toggle span::before { top: -7px; }
+    .menu-toggle span::after { top: 7px; }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      background: #DCDBD8;
+      color: #000;
+    }
+    .mobile-menu.is-open {
+      display: flex;
+    }
+    .menu-close {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      background: transparent;
+      border: 0;
+      color: #000;
+      cursor: pointer;
+      font-family: 'Switzer', sans-serif;
+      font-size: 42px;
+      font-weight: 300;
+      line-height: 1;
+    }
+    .menu-message {
+      align-self: center;
+      width: 100%;
+      padding: 0 28px;
+      text-align: center;
+      font-size: clamp(34px, 10vw, 72px);
+      font-weight: 300;
+      line-height: 1.05;
+    }
+    body.menu-open {
+      overflow: hidden;
+    }
+
     @media (max-width: 1023px) {
       .dl-btn--mobile { display: inline-flex; }
+      .menu-toggle {
+        position: fixed;
+        top: 20px;
+        right: 18px;
+        z-index: 40;
+        display: inline-flex;
+      }
     }
 
     /* ─── Very wide screens ──────────────────────────────────── */
@@ -332,6 +441,10 @@
       <img class="nav-icon" src="assets/spoton-logo.png" alt="SpotOn">
       <span class="nav-name">SpotOn</span>
     </nav>
+
+    <button class="menu-toggle" type="button" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+    </button>
 
     <!-- ── Tagline (left column) ───────────────────────────── -->
     <div class="left">
@@ -373,6 +486,27 @@
       <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
     </svg>
   </a>
+
+  <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <button class="menu-close" type="button" aria-label="Close menu">x</button>
+    <p class="menu-message">in stealth mode, more news to come soon</p>
+  </div>
+
+  <script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const menuClose = document.querySelector('.menu-close');
+
+    function setMenuOpen(isOpen) {
+      mobileMenu.classList.toggle('is-open', isOpen);
+      document.body.classList.toggle('menu-open', isOpen);
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+    }
+
+    menuToggle.addEventListener('click', () => setMenuOpen(true));
+    menuClose.addEventListener('click', () => setMenuOpen(false));
+  </script>
 
 </body>
 </html>
