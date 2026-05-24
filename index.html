@@ -61,6 +61,16 @@
       font-weight: 600;
       font-style: normal;
     }
+    @font-face {
+      font-family: 'Switzer-Light';
+      src: url('Fonts/Switzer-Light.ttf') format('truetype');
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Switzer-Semibold';
+      src: url('Fonts/Switzer-Semibold.ttf') format('truetype');
+      font-style: normal;
+    }
 
     /* ─── Reset ──────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -109,11 +119,12 @@
         filter 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .nav-name {
+      font-family: 'Switzer-Light', sans-serif;
       font-size: clamp(16px, 1.5vw, 22px);
-      font-weight: 600;
       letter-spacing: -0.02em;
       transition: text-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+    .nav-name strong { font-family: 'Switzer-Semibold', sans-serif; font-weight: normal; }
     .nav:hover .nav-icon {
       filter: brightness(1.08);
       box-shadow: 0 22px 44px rgba(255, 255, 255, 0.18);
@@ -233,7 +244,7 @@
     .dl-btn:hover  { transform: translateY(-7px) scale(1.04); box-shadow: 0 22px 44px rgba(255,255,255,0.18); }
     .dl-btn:active { transform: translateY(-2px) scale(1.01); transition-duration: 0.2s; }
     .dl-btn svg    { width: 15px; height: 15px; flex-shrink: 0; }
-    .dl-btn strong { font-weight: 600; }
+    .dl-btn strong { font-family: 'Switzer-Semibold', sans-serif; font-weight: normal; }
 
     /* ─── Keyframes ──────────────────────────────────────────── */
 
@@ -435,7 +446,7 @@
     <!-- ── Branding (top-left) ─────────────────────────────── -->
     <nav class="nav">
       <img class="nav-icon" src="assets/spoton-logo.png" alt="SpotOn">
-      <span class="nav-name">SpotOn</span>
+      <span class="nav-name"><strong>Spot</strong>On</span>
     </nav>
 
     <button class="menu-toggle" type="button" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false">
@@ -477,7 +488,7 @@
 
   <!-- Mobile download button — direct body child for fixed positioning -->
   <a href="#" class="dl-btn dl-btn--mobile" aria-label="Download SpotOn app">
-    <span>Download The <strong>SpotOn</strong> App</span>
+    <span>Download The <strong>Spot</strong>On App</span>
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
     </svg>
