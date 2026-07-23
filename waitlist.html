@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpotOn — Join the waitlist.</title>
+  <meta name="description" content="Join the SpotOn waitlist and be first to know when parking goes infinite.">
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       WAITLIST PAGE — shares the SpotOn design system
+       (see index.html). Black canvas, Switzer type, white pill.
+    ═══════════════════════════════════════════════════════════ */
+
+    /* ─── Fonts (same faces as index.html) ───────────────────── */
+    @font-face {
+      font-family: 'Switzer';
+      src: url('Fonts/Switzer-Light.ttf') format('truetype');
+      font-weight: 300; font-style: normal;
+    }
+    @font-face {
+      font-family: 'Switzer';
+      src: url('Fonts/Switzer-Semibold.ttf') format('truetype');
+      font-weight: 600; font-style: normal;
+    }
+    @font-face {
+      font-family: 'Switzer-Light';
+      src: url('Fonts/Switzer-Light.ttf') format('truetype');
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Switzer-Semibold';
+      src: url('Fonts/Switzer-Semibold.ttf') format('truetype');
+      font-style: normal;
+    }
+
+    /* ─── Reset ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; min-height: 100%; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Switzer', sans-serif;
+      font-weight: 300;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* ── Branding (top-left, links home) ─────────────────────── */
+    .nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: clamp(20px, 3vh, 40px) 0 0 clamp(20px, 3vw, 48px);
+      text-decoration: none;
+      color: #fff;
+      width: fit-content;
+      animation: blurUp 0.9s ease-out 0.05s backwards;
+    }
+    .nav-icon {
+      width: clamp(28px, 2.4vw, 40px);
+      height: clamp(28px, 2.4vw, 40px);
+      border-radius: 50%;
+      object-fit: cover;
+      transition:
+        box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-name {
+      font-family: 'Switzer-Light', sans-serif;
+      font-size: clamp(16px, 1.5vw, 22px);
+      letter-spacing: -0.02em;
+      transition: text-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-name strong { font-family: 'Switzer-Semibold', sans-serif; font-weight: normal; }
+    .nav:hover .nav-icon {
+      filter: brightness(1.08);
+      box-shadow: 0 22px 44px rgba(255, 255, 255, 0.18);
+    }
+    .nav:hover .nav-name {
+      text-shadow:
+        0 10px 24px rgba(255, 255, 255, 0.24),
+        0 22px 44px rgba(255, 255, 255, 0.18);
+    }
+
+    /* ── Centre stage ────────────────────────────────────────── */
+    .stage {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(32px, 8vh, 96px) clamp(24px, 5vw, 48px);
+    }
+    .card {
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+    }
+
+    .headline {
+      font-size: clamp(34px, 7vw, 66px);
+      font-weight: 300;
+      line-height: 1.06;
+      letter-spacing: -0.025em;
+      animation: blurUp 1s ease-out 0.2s backwards;
+    }
+    .headline em {
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .sub {
+      margin: clamp(16px, 2.5vh, 24px) auto 0;
+      max-width: 40ch;
+      font-size: clamp(14px, 1.15vw, 18px);
+      font-weight: 300;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.72);
+      animation: blurUp 1s ease-out 0.4s backwards;
+    }
+
+    /* ── EmailOctopus form frame + overrides ─────────────────── */
+    /* The embed injects its own markup; we override by element/type
+       (robust regardless of EmailOctopus's class names) with
+       !important to beat any inline styles it ships.               */
+    .eo-form {
+      margin-top: clamp(24px, 4vh, 40px);
+      animation: blurUp 1s ease-out 0.6s backwards;
+    }
+
+    .eo-form form {
+      display: flex !important;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto !important;
+    }
+
+    .eo-form label {
+      display: none !important; /* placeholder carries the affordance */
+    }
+
+    .eo-form input[type="email"],
+    .eo-form input[type="text"] {
+      width: 100% !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      border-radius: 999px !important;
+      color: #fff !important;
+      font-family: 'Switzer', sans-serif !important;
+      font-weight: 300 !important;
+      font-size: clamp(14px, 1vw, 16px) !important;
+      letter-spacing: -0.01em !important;
+      padding: 14px 22px !important;
+      outline: none !important;
+      transition: border-color 0.4s ease, background 0.4s ease !important;
+    }
+    .eo-form input[type="email"]::placeholder,
+    .eo-form input[type="text"]::placeholder {
+      color: rgba(255, 255, 255, 0.5) !important;
+    }
+    .eo-form input[type="email"]:focus,
+    .eo-form input[type="text"]:focus {
+      border-color: rgba(255, 255, 255, 0.6) !important;
+      background: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .eo-form button,
+    .eo-form input[type="submit"],
+    .eo-form button[type="submit"] {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 100% !important;
+      background: #fff !important;
+      color: #000 !important;
+      border: none !important;
+      outline: none !important;
+      border-radius: 999px !important;
+      padding: 15px 28px !important;
+      font-family: 'Switzer', sans-serif !important;
+      font-weight: 600 !important;
+      font-size: clamp(14px, 1vw, 16px) !important;
+      letter-spacing: -0.01em !important;
+      cursor: pointer !important;
+      transition:
+        transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    }
+    .eo-form button:hover,
+    .eo-form input[type="submit"]:hover,
+    .eo-form button[type="submit"]:hover {
+      transform: translateY(-4px) scale(1.02) !important;
+      box-shadow: 0 18px 36px rgba(255, 255, 255, 0.18) !important;
+    }
+
+    /* Success / error messages the embed may print */
+    .eo-form p,
+    .eo-form .message {
+      color: rgba(255, 255, 255, 0.8) !important;
+      font-family: 'Switzer', sans-serif !important;
+      font-size: 14px !important;
+      margin-top: 10px !important;
+    }
+
+    /* Tiny legal line under the form */
+    .fineprint {
+      margin-top: clamp(18px, 3vh, 28px);
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.42);
+      animation: blurUp 1s ease-out 0.8s backwards;
+    }
+    .fineprint a { color: rgba(255, 255, 255, 0.62); text-decoration: underline; }
+
+    /* ─── Entrance keyframe (same as index.html) ─────────────── */
+    @keyframes blurUp {
+      from { opacity: 0; filter: blur(12px); transform: translateY(12px); }
+      to   { opacity: 1; filter: none;       transform: translateY(0);    }
+    }
+
+    @media (max-width: 1023px) {
+      .nav { padding: 28px 24px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Branding (returns home) ─────────────────────────────── -->
+  <a class="nav" href="index.html" aria-label="SpotOn home">
+    <img class="nav-icon" src="assets/spoton-logo.png" alt="SpotOn">
+    <span class="nav-name"><strong>Spot</strong>On</span>
+  </a>
+
+  <!-- ── Centre stage ────────────────────────────────────────── -->
+  <main class="stage">
+    <div class="card">
+      <h1 class="headline">Join the <em>waitlist</em>.</h1>
+      <p class="sub">
+        Parking is about to go infinite. Drop your email and
+        we'll let you know the moment SpotOn goes live.
+      </p>
+
+      <!-- EmailOctopus embedded form -->
+      <div class="eo-form">
+        <script async src="https://eomail5.com/form/58a70b9a-8654-11f1-b727-f55178c5fcb4.js" data-form="58a70b9a-8654-11f1-b727-f55178c5fcb4"></script>
+      </div>
+
+      <p class="fineprint">
+        No spam, ever. One email at launch, then it's up to you.
+      </p>
+    </div>
+  </main>
+
+</body>
+</html>

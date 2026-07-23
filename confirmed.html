@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpotOn — You're on the list.</title>
+  <meta name="description" content="You're on the SpotOn waitlist. We'll email you the moment parking goes infinite.">
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       CONFIRMATION PAGE — set this URL as the redirect in your
+       EmailOctopus form settings. Same SpotOn design system.
+    ═══════════════════════════════════════════════════════════ */
+
+    @font-face {
+      font-family: 'Switzer';
+      src: url('Fonts/Switzer-Light.ttf') format('truetype');
+      font-weight: 300; font-style: normal;
+    }
+    @font-face {
+      font-family: 'Switzer';
+      src: url('Fonts/Switzer-Semibold.ttf') format('truetype');
+      font-weight: 600; font-style: normal;
+    }
+    @font-face {
+      font-family: 'Switzer-Light';
+      src: url('Fonts/Switzer-Light.ttf') format('truetype');
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Switzer-Semibold';
+      src: url('Fonts/Switzer-Semibold.ttf') format('truetype');
+      font-style: normal;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; min-height: 100%; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Switzer', sans-serif;
+      font-weight: 300;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    .nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: clamp(20px, 3vh, 40px) 0 0 clamp(20px, 3vw, 48px);
+      text-decoration: none;
+      color: #fff;
+      width: fit-content;
+      animation: blurUp 0.9s ease-out 0.05s backwards;
+    }
+    .nav-icon {
+      width: clamp(28px, 2.4vw, 40px);
+      height: clamp(28px, 2.4vw, 40px);
+      border-radius: 50%;
+      object-fit: cover;
+      transition:
+        box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-name {
+      font-family: 'Switzer-Light', sans-serif;
+      font-size: clamp(16px, 1.5vw, 22px);
+      letter-spacing: -0.02em;
+    }
+    .nav-name strong { font-family: 'Switzer-Semibold', sans-serif; font-weight: normal; }
+    .nav:hover .nav-icon {
+      filter: brightness(1.08);
+      box-shadow: 0 22px 44px rgba(255, 255, 255, 0.18);
+    }
+
+    .stage {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(32px, 8vh, 96px) clamp(24px, 5vw, 48px);
+    }
+    .card {
+      width: 100%;
+      max-width: 560px;
+      text-align: center;
+    }
+
+    /* Check badge */
+    .badge {
+      width: clamp(56px, 7vw, 76px);
+      height: clamp(56px, 7vw, 76px);
+      margin: 0 auto clamp(20px, 3vh, 32px);
+      border-radius: 50%;
+      background: #fff;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: popIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s backwards;
+    }
+    .badge svg { width: 46%; height: 46%; }
+
+    .headline {
+      font-size: clamp(34px, 7vw, 66px);
+      font-weight: 300;
+      line-height: 1.06;
+      letter-spacing: -0.025em;
+      animation: blurUp 1s ease-out 0.3s backwards;
+    }
+    .headline em { font-style: normal; font-weight: 600; }
+
+    .sub {
+      margin: clamp(16px, 2.5vh, 24px) auto 0;
+      max-width: 42ch;
+      font-size: clamp(14px, 1.15vw, 18px);
+      font-weight: 300;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.72);
+      animation: blurUp 1s ease-out 0.5s backwards;
+    }
+
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: clamp(26px, 4vh, 40px);
+      background: #fff;
+      color: #000;
+      border-radius: 999px;
+      padding: 14px 28px;
+      font-family: 'Switzer', sans-serif;
+      font-weight: 600;
+      font-size: clamp(14px, 1vw, 16px);
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      animation: blurUp 1s ease-out 0.7s backwards;
+      transition:
+        transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .home-btn:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 18px 36px rgba(255, 255, 255, 0.18);
+    }
+
+    @keyframes blurUp {
+      from { opacity: 0; filter: blur(12px); transform: translateY(12px); }
+      to   { opacity: 1; filter: none;       transform: translateY(0);    }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.6); }
+      to   { opacity: 1; transform: scale(1);   }
+    }
+
+    @media (max-width: 1023px) {
+      .nav { padding: 28px 24px 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="nav" href="index.html" aria-label="SpotOn home">
+    <img class="nav-icon" src="assets/spoton-logo.png" alt="SpotOn">
+    <span class="nav-name"><strong>Spot</strong>On</span>
+  </a>
+
+  <main class="stage">
+    <div class="card">
+      <div class="badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12.5l4.5 4.5L19 6.5"/>
+        </svg>
+      </div>
+      <h1 class="headline">You're <em>on the list</em>.</h1>
+      <p class="sub">
+        Thanks for joining the SpotOn waitlist. We'll email you the
+        moment parking goes infinite &mdash; keep an eye on your inbox.
+      </p>
+      <a class="home-btn" href="index.html">
+        Back to home
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="15" height="15">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+        </svg>
+      </a>
+    </div>
+  </main>
+
+</body>
+</html>
