@@ -191,10 +191,10 @@
     /* Device frame: a positioning box with the iPhone mockup
        (assets/iphonemockup.png, 1758×3664) layered over the video.
        The video is sized to the mockup's transparent screen cutout —
-       measured at x76 y84 w1608 h3496 — so the percentages below
-       derive from those numbers. No border-radius needed: the video's
-       square corners hide behind the mockup's opaque bezel, and the
-       cutout's own rounded corners do the clipping. */
+       measured at x76 y84 w1608 h3496, corner radius 251 — so the
+       percentages below derive from those numbers. The video needs its
+       own border-radius: square corners would show through the
+       cutout's transparent rounded corners. */
     .phone-frame {
       position: relative;
       height: var(--phone-height-desktop);
@@ -219,6 +219,8 @@
       width: 91.47%; /* 1608 / 1758 */
       height: 95.42%;/* 3496 / 3664 */
       object-fit: cover;
+      /* 251 / 1608  ×  251 / 3496 — elliptical % keeps a circular corner */
+      border-radius: 15.61% / 7.18%;
       z-index: 0;
     }
 
