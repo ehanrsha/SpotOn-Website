@@ -191,7 +191,7 @@
     /* Device frame: a positioning box with the iPhone silhouette
        (assets/iphone-frame.svg, viewBox 958×1936) layered over the
        video. The video is sized to the frame's transparent screen
-       cutout — rect x38 y44 w882 h1846, corner radius 108 — so all
+       cutout — rect x42 y34 w874 h1868, corner radius 105 — so all
        percentages below derive from those numbers. */
     .phone-frame {
       position: relative;
@@ -212,12 +212,12 @@
     .phone-video {
       display: block;
       position: absolute;
-      left: 3.97%;   /* 38 / 958 */
-      top: 2.27%;    /* 44 / 1936 */
-      width: 92.07%; /* 882 / 958 */
-      height: 95.35%;/* 1846 / 1936 */
+      left: 4.38%;   /* 42 / 958 */
+      top: 1.76%;    /* 34 / 1936 */
+      width: 91.23%; /* 874 / 958 */
+      height: 96.49%;/* 1868 / 1936 */
       object-fit: cover;
-      border-radius: calc(var(--phone-height-desktop) * 0.0558); /* 108 / 1936 */
+      border-radius: calc(var(--phone-height-desktop) * 0.0542); /* 105 / 1936 */
       z-index: 0;
     }
 
@@ -353,7 +353,7 @@
       }
 
       .phone-video {
-        border-radius: calc(var(--phone-width-mobile) * 0.1127); /* 108 / 958 */
+        border-radius: calc(var(--phone-width-mobile) * 0.1096); /* 105 / 958 */
       }
     }
 
