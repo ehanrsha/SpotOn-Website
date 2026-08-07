@@ -15,8 +15,8 @@
       /* Phone video height. Bigger = phone feels more immersive.   */
       --phone-height-desktop: 105vh;
 
-      /* Phone video corner curvature. 0px = square, higher = rounder. */
-      --phone-edge-radius:    48px;
+      /* (Screen corner curvature now comes from the device frame
+         geometry — see the .phone-frame rules below.) */
 
       /* How far the phone is pushed below the fold.
          This is *also* the resting translateY of the slide-up.
@@ -188,12 +188,37 @@
       will-change: transform, opacity;
     }
 
+    /* Device frame: a positioning box with the iPhone silhouette
+       (assets/iphone-frame.svg, viewBox 958×1936) layered over the
+       video. The video is sized to the frame's transparent screen
+       cutout — rect x38 y44 w882 h1846, corner radius 108 — so all
+       percentages below derive from those numbers. */
+    .phone-frame {
+      position: relative;
+      height: var(--phone-height-desktop);
+      aspect-ratio: 958 / 1936;
+    }
+
+    .phone-frame-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
     .phone-video {
       display: block;
-      height: var(--phone-height-desktop);
-      width: auto;
-      border-radius: var(--phone-edge-radius);
-      overflow: hidden;
+      position: absolute;
+      left: 3.97%;   /* 38 / 958 */
+      top: 2.27%;    /* 44 / 1936 */
+      width: 92.07%; /* 882 / 958 */
+      height: 95.35%;/* 1846 / 1936 */
+      object-fit: cover;
+      border-radius: calc(var(--phone-height-desktop) * 0.0558); /* 108 / 1936 */
+      z-index: 0;
     }
 
     /* ── Right column: description + button (bottom-aligned) ──── */
@@ -322,9 +347,13 @@
         animation: phoneRiseMobile var(--rise-duration) var(--rise-easing) 0.1s forwards;
       }
 
-      .phone-video {
+      .phone-frame {
         height: auto;
         width: var(--phone-width-mobile);
+      }
+
+      .phone-video {
+        border-radius: calc(var(--phone-width-mobile) * 0.1127); /* 108 / 958 */
       }
     }
 
@@ -461,9 +490,12 @@
     <!-- ── Phone video (centre column) ─────────────────────── -->
     <div class="phone-col">
       <div class="phone-inner">
-        <video class="phone-video" autoplay loop muted playsinline>
-          <source src="assets/demo.webm" type="video/webm">
-        </video>
+        <div class="phone-frame">
+          <video class="phone-video" autoplay loop muted playsinline>
+            <source src="assets/demo.webm" type="video/webm">
+          </video>
+          <img class="phone-frame-img" src="assets/iphone-frame.svg" alt="" aria-hidden="true">
+        </div>
       </div>
     </div>
 
