@@ -1,0 +1,596 @@
+/* ═══════════════════════════════════════════════════════════
+   SHARED HERO STYLESHEET
+   Used by index.html (drivers) and listers.html. The two pages
+   are identical in layout and differ only in their copy, so the
+   styling lives here once — edit this file and both pages move
+   together.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   TWEAKABLE NUMBERS — change these to taste.
+   Every value that controls phone size / clipping / animation
+   is in this block. Nothing else needs editing.
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  /* ── Desktop (≥ 1024px) ─────────────────────────────────── */
+  /* Phone video height. Bigger = phone feels more immersive.   */
+  --phone-height-desktop: 105vh;
+
+  /* (Screen corner curvature now comes from the device frame
+     geometry — see the .phone-frame rules below.) */
+
+  /* How far the phone is pushed below the fold.
+     This is *also* the resting translateY of the slide-up.
+     At 95vh phone × 25vh clip ≈ 26 % bottom-clipped.            */
+  --phone-clip-desktop:   25vh;
+
+  /* Desktop side gap between the phone and each text group. */
+  --phone-side-gap-desktop: clamp(32px, 5vw, 100px);
+
+  /* ── Mobile (< 1024px) ──────────────────────────────────── */
+  /* Phone width as a % of screen. Height comes from the
+     video's natural aspect ratio. */
+  --phone-width-mobile:   65vw;
+
+  /* Vertical gap between the description text and the video. */
+  --phone-text-gap:       20px;
+
+  /* Empty scrollable space underneath the phone on mobile. */
+  --phone-bottom-space-mobile: 64px;
+
+  /* Extra scroll clearance so the fixed mobile download bar does not cover the phone. */
+  --mobile-download-clearance: 70px;
+
+  /* ── Slide-up animation ─────────────────────────────────── */
+  /* Duration of the rise.                                       */
+  --rise-duration: 1.2s;
+  /* Easing — smooth ease-out, no overshoot, no bounce.
+     Swap to `ease-out` or `linear` if you want.                 */
+  --rise-easing:   cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Overshoot spline shared by every springy transition on the
+     site (buttons, menu links, the notification drop). The 1.56
+     control point is what produces the bounce.                  */
+  --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Notification banner ────────────────────────────────── */
+  /* How long the page sits still before the banner drops in.   */
+  --notif-delay:    3s;
+  /* Length of the drop itself.                                  */
+  --notif-duration: 0.95s;
+  /* Resting distance from the top of the viewport.              */
+  --notif-top:      clamp(16px, 2.4vh, 30px);
+}
+
+/* ─── Fonts ──────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Switzer';
+  src: url('Fonts/Switzer-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Switzer';
+  src: url('Fonts/Switzer-Semibold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Switzer-Light';
+  src: url('Fonts/Switzer-Light.ttf') format('truetype');
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Switzer-Semibold';
+  src: url('Fonts/Switzer-Semibold.ttf') format('truetype');
+  font-style: normal;
+}
+
+/* ─── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; }
+
+body {
+  background: #000;
+  color: #fff;
+  font-family: 'Switzer', sans-serif;
+  font-weight: 300;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DESKTOP — 3-column grid (text left | video centre | text right)
+   Per Figma 366-2.  Hero is full viewport with overflow:hidden
+   so any phone that sticks out below gets clipped.
+═══════════════════════════════════════════════════════════ */
+.hero {
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+}
+
+/* ── Branding (top-left) ──────────────────────────────────── */
+.nav {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: clamp(20px, 3vh, 40px) 0 0 clamp(20px, 3vw, 48px);
+  animation: blurUp 0.9s ease-out 0.05s backwards;
+}
+.nav-icon {
+  width: clamp(28px, 2.4vw, 40px);
+  height: clamp(28px, 2.4vw, 40px);
+  border-radius: 50%;
+  object-fit: cover;
+  transition:
+    box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nav-name {
+  font-family: 'Switzer-Light', sans-serif;
+  font-size: clamp(16px, 1.5vw, 22px);
+  letter-spacing: -0.02em;
+  transition: text-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nav-name strong { font-family: 'Switzer-Semibold', sans-serif; font-weight: normal; }
+.nav:hover .nav-icon {
+  filter: brightness(1.08);
+  box-shadow: 0 22px 44px rgba(255, 255, 255, 0.18);
+}
+.nav:hover .nav-name {
+  text-shadow:
+    0 10px 24px rgba(255, 255, 255, 0.24),
+    0 22px 44px rgba(255, 255, 255, 0.18);
+}
+
+/* ── Tagline (left column, bottom-aligned) ────────────────── */
+.left {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0 0 clamp(72px, 16vh, 150px) clamp(20px, 3vw, 48px);
+  animation: blurUp 1s ease-out 0.35s backwards;
+}
+.tagline {
+  font-size: clamp(26px, 4vw, 68px);
+  font-weight: 300;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+}
+.tagline em {
+  border-radius: 0.16em;
+  cursor: default;
+  font-style: normal;
+  font-weight: 600;
+  transition:
+    text-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tagline em:hover {
+  filter: brightness(1.08);
+  text-shadow:
+    0 10px 24px rgba(255, 255, 255, 0.24),
+    0 22px 44px rgba(255, 255, 255, 0.18);
+}
+
+/* ── Phone column (centre, spans both rows, bottom-anchored) ─
+   align-self: end pins the phone to the bottom of the 100vh
+   grid area. The phoneRise animation slides it up from off-
+   screen and stops at translateY(--phone-clip-desktop) — so
+   that exact amount lives below the viewport and is clipped
+   by .hero { overflow: hidden }.                              */
+.phone-col {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: end;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--phone-side-gap-desktop);
+}
+
+.phone-inner {
+  opacity: 0;
+  animation: phoneRise var(--rise-duration) var(--rise-easing) 0.1s forwards;
+  will-change: transform, opacity;
+}
+
+/* Device frame: a positioning box with the iPhone mockup
+   (assets/iphonemockup.png, 1758×3664) layered over the video.
+   The video is sized to the mockup's transparent screen cutout —
+   measured at x76 y84 w1608 h3496, corner radius 251 — so the
+   percentages below derive from those numbers. The video needs its
+   own border-radius: square corners would show through the
+   cutout's transparent rounded corners. */
+.phone-frame {
+  position: relative;
+  height: var(--phone-height-desktop);
+  aspect-ratio: 1758 / 3664;
+}
+
+.phone-frame-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.phone-video {
+  display: block;
+  position: absolute;
+  left: 4.32%;   /* 76 / 1758 */
+  top: 2.29%;    /* 84 / 3664 */
+  width: 91.47%; /* 1608 / 1758 */
+  height: 95.42%;/* 3496 / 3664 */
+  object-fit: cover;
+  /* 251 / 1608  ×  251 / 3496 — elliptical % keeps a circular corner */
+  border-radius: 15.61% / 7.18%;
+  z-index: 0;
+}
+
+/* ── Right column: description + button (bottom-aligned) ──── */
+.right {
+  grid-column: 3;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: clamp(16px, 2.5vh, 28px);
+  padding: 0 clamp(20px, 3vw, 64px) clamp(72px, 16vh, 150px) 0;
+}
+
+.description {
+  font-size: clamp(13px, 1.05vw, 18px);
+  font-weight: 300;
+  line-height: 1.72;
+  color: rgba(255, 255, 255, 0.75);
+  animation: blurUp 1s ease-out 0.65s backwards;
+}
+
+/* ─── Download Button (desktop) ─────────────────────────── */
+.dl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #fff;
+  color: #000;
+  border: none;
+  outline: none;
+  border-radius: 999px;
+  padding: clamp(12px, 1.2vh, 18px) clamp(20px, 1.8vw, 32px);
+  font-family: 'Switzer', sans-serif;
+  font-weight: 300;
+  font-size: clamp(13px, 0.95vw, 16px);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  width: fit-content;
+  animation: blurUp 1s ease-out 0.85s backwards;
+  transition:
+    transform  0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+.dl-btn:hover  { transform: translateY(-7px) scale(1.04); box-shadow: 0 22px 44px rgba(255,255,255,0.18); }
+.dl-btn:active { transform: translateY(-2px) scale(1.01); transition-duration: 0.2s; }
+.dl-btn svg    { width: 15px; height: 15px; flex-shrink: 0; }
+.dl-btn strong { font-family: 'Switzer-Semibold', sans-serif; font-weight: normal; }
+
+/* ═══════════════════════════════════════════════════════════
+   NOTIFICATION BANNER
+   Per Figma 760-2 / 760-62. A translucent pill that drops in
+   from above the viewport once the hero has settled, then rests
+   centred at the top. Tapping it goes to the waitlist.
+
+   The drop lives on .notif-wrap and the hover spring lives on
+   .notif — splitting them keeps `animation-fill-mode: forwards`
+   (which pins the wrapper's final transform) from swallowing the
+   hover transform on the link itself.
+═══════════════════════════════════════════════════════════ */
+.notif-wrap {
+  position: fixed;
+  top: var(--notif-top);
+  left: 50%;
+  z-index: 60;
+  /* Resting state is off-screen; notifDrop brings it down and
+     `forwards` holds it at the landed position. */
+  opacity: 0;
+  transform: translate(-50%, -240%);
+  animation: notifDrop var(--notif-duration) var(--bounce) var(--notif-delay) forwards;
+  will-change: transform, opacity;
+}
+
+.notif {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+  max-width: min(70vw, 340px);
+  padding: 9px 20px;
+  background: rgba(255, 255, 255, 0.57);
+  border: 1px solid #000;
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  /* Per Figma the pill sits over the wordmark. The resting shadow is
+     what sells that as a notification floating above the page rather
+     than a collision with the nav. */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-family: 'Switzer-Light', 'Switzer', sans-serif;
+  font-weight: 300;
+  font-size: clamp(11.5px, 3vw, 13px);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform  0.45s var(--bounce),
+    box-shadow 0.45s var(--bounce);
+  will-change: transform;
+}
+.notif:hover  { transform: translateY(-3px) scale(1.03); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65); }
+.notif:active { transform: translateY(-1px) scale(1.01); transition-duration: 0.2s; }
+.notif strong { font-family: 'Switzer-Semibold', sans-serif; font-weight: normal; }
+
+/* ─── Keyframes ──────────────────────────────────────────── */
+
+/* Phone slide-up — desktop.
+   Ends at translateY(--phone-clip-desktop) so that amount
+   hangs below the hero edge and gets clipped.                */
+@keyframes phoneRise {
+  from { opacity: 0; transform: translateY(110vh); }
+  to   { opacity: 1; transform: translateY(var(--phone-clip-desktop)); }
+}
+
+/* Phone slide-up — mobile.
+   Phone stays in normal flow; we just slide it up into place. */
+@keyframes phoneRiseMobile {
+  from { opacity: 0; transform: translateY(60vh); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes blurUp {
+  from { opacity: 0; filter: blur(12px); transform: translateY(12px); }
+  to   { opacity: 1; filter: none;       transform: translateY(0);    }
+}
+
+/* Notification drop. The travel is a straight line; the bounce
+   comes entirely from --bounce overshooting past 1 and settling
+   back — a spline bounce, not a keyframed one.                */
+@keyframes notifDrop {
+  from { opacity: 0; transform: translate(-50%, -240%) scale(0.96); }
+  to   { opacity: 1; transform: translate(-50%, 0)     scale(1);    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE  (< 1024px)
+   Single-column flex.  Order: nav → tagline → description →
+   video.  Fixed download button stays pinned to the viewport.
+   Video width = --phone-width-mobile, height = aspect-ratio.
+   Page scrolls normally so the full phone can be viewed.
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 1023px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    height: auto;
+    overflow: visible;
+    padding-bottom: var(--mobile-download-clearance);
+  }
+
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  /* unwind grid placement, set flex order */
+  .nav      { order: 1; grid-column: unset; grid-row: unset; padding: 28px 24px 0; }
+  .left     { order: 2; grid-column: unset; grid-row: unset; align-items: flex-start; justify-content: flex-start; padding: 24px 24px 0; }
+  .right    { order: 3; grid-column: unset; grid-row: unset; justify-content: flex-start; padding: 12px 24px 0; gap: 0; }
+  .phone-col{
+    order: 4;
+    grid-column: unset;
+    grid-row: unset;
+    align-self: stretch;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 0 var(--phone-bottom-space-mobile);
+    margin-top: var(--phone-text-gap);
+    flex: 0 0 auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .dl-btn--desktop { display: none !important; }
+
+  .tagline {
+    font-size: clamp(34px, 10vw, 58px);
+  }
+  .description {
+    font-size: clamp(15px, 4vw, 19px);
+    line-height: 1.5;
+  }
+
+  .phone-inner {
+    animation: phoneRiseMobile var(--rise-duration) var(--rise-easing) 0.1s forwards;
+  }
+
+  .phone-frame {
+    height: auto;
+    width: var(--phone-width-mobile);
+  }
+
+  /* Keep the pill clear of the hamburger in the top-right. */
+  .notif { max-width: min(62vw, 290px); }
+}
+
+/* ─── Mobile fixed download button (DO NOT TOUCH) ─────────── */
+.dl-btn--mobile {
+  display: none;
+  position: fixed;
+  bottom: 14px;
+  left: 10vw;
+  right: 10vw;
+  width: auto;
+  max-width: none;
+  font-size: clamp(13px, 3.6vw, 16px);
+  padding: 12px 20px;
+  white-space: nowrap;
+  gap: 6px;
+  transition:
+    transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.dl-btn--mobile:hover  { transform: translateY(-6px) scale(1.02); box-shadow: 0 18px 36px rgba(255, 255, 255, 0.18); }
+.dl-btn--mobile:active { transform: translateY(-2px) scale(1.01); transition-duration: 0.2s; }
+
+/* ─── Menu ───────────────────────────────────────────────────
+   The hamburger is fixed to the top-right on every breakpoint —
+   desktop and mobile open the same full-page beige overlay.
+──────────────────────────────────────────────────────────── */
+.menu-toggle {
+  position: fixed;
+  top: clamp(20px, 3vh, 40px);
+  right: clamp(20px, 3vw, 48px);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+}
+.menu-toggle span {
+  position: relative;
+  width: 24px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 999px;
+}
+.menu-toggle span::before,
+.menu-toggle span::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 24px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 999px;
+}
+.menu-toggle span::before { top: -7px; }
+.menu-toggle span::after { top: 7px; }
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #DCDBD8;
+  color: #000;
+}
+.mobile-menu.is-open {
+  display: flex;
+}
+.menu-close {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: transparent;
+  border: 0;
+  color: #000;
+  cursor: pointer;
+  font-family: 'Switzer', sans-serif;
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 1;
+}
+.menu-body {
+  width: 100%;
+  padding: 0 28px;
+  text-align: center;
+}
+.menu-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(6px, 1.4vh, 14px);
+}
+.menu-link {
+  display: inline-block;
+  color: #000;
+  text-decoration: none;
+  font-family: 'Switzer-Light', 'Switzer', sans-serif;
+  font-weight: 300;
+  font-size: clamp(30px, 8.5vw, 58px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  transition: transform 0.5s var(--bounce);
+  will-change: transform;
+}
+.menu-link:hover { transform: translateY(-4px); }
+.menu-link strong { font-family: 'Switzer-Semibold', sans-serif; font-weight: normal; }
+/* The page you are already on reads as the solid weight. */
+.menu-link[aria-current="page"] { font-family: 'Switzer-Semibold', sans-serif; }
+
+/* Stealth note sits underneath the menu options. */
+.menu-message {
+  margin-top: clamp(26px, 5vh, 52px);
+  font-size: clamp(15px, 4vw, 20px);
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.55);
+}
+body.menu-open {
+  overflow: hidden;
+}
+
+@media (max-width: 1023px) {
+  .dl-btn--mobile { display: inline-flex; }
+  .menu-toggle {
+    top: 20px;
+    right: 18px;
+  }
+}
+
+/* ─── Very wide screens ──────────────────────────────────── */
+@media (min-width: 1600px) {
+  .hero { max-width: 1600px; margin: 0 auto; }
+}
+
+/* ─── Reduced motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .notif-wrap {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    animation: none;
+  }
+  .notif:hover,
+  .menu-link:hover { transform: none; }
+}
