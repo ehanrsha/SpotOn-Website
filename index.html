@@ -30,7 +30,7 @@
     <div class="phone-col">
       <div class="phone-inner">
         <div class="phone-frame">
-          <video class="phone-video" autoplay loop muted playsinline>
+          <video class="phone-video" autoplay muted playsinline>
             <source src="assets/demo.webm" type="video/webm">
             <source src="assets/demo.mp4" type="video/mp4">
           </video>
@@ -102,6 +102,25 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') setMenuOpen(false);
     });
+
+    // Play only this page's segment of the demo video, looping within it.
+    const demoVideo = document.querySelector('.phone-video');
+    const CLIP_START = 0;
+    const CLIP_END = 49;
+
+    function restartClip() {
+      demoVideo.currentTime = CLIP_START;
+      demoVideo.play().catch(() => {});
+    }
+
+    demoVideo.addEventListener('loadedmetadata', () => {
+      if (demoVideo.currentTime < CLIP_START) demoVideo.currentTime = CLIP_START;
+    });
+    demoVideo.addEventListener('timeupdate', () => {
+      if (demoVideo.currentTime < CLIP_START - 0.25) demoVideo.currentTime = CLIP_START;
+      else if (demoVideo.currentTime >= CLIP_END) restartClip();
+    });
+    demoVideo.addEventListener('ended', restartClip);
   </script>
 
 </body>
