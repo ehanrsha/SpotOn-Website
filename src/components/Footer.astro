@@ -1,0 +1,172 @@
+---
+import { APP_STORE } from '../config';
+const EMAIL = 'team.spotonapp@gmail.com';
+// split into nowrap words so mobile can wrap at the @
+const words = ['TEAM.SPOTONAPP', '@GMAIL.COM'];
+let idx = 0;
+const rows = [
+  { label: 'Download on the App Store', href: APP_STORE, ext: true },
+  { label: 'Email us', href: `mailto:${EMAIL}`, ext: false },
+  { label: 'Terms of Service', href: '/terms', ext: false },
+  { label: 'Privacy Policy', href: '/privacy', ext: false },
+];
+---
+<footer class="footer" id="contact">
+  <div class="ft">
+    <div class="ft-top">
+      <p class="ft-tag"><i aria-hidden="true"></i>CONTACT</p>
+      <p class="ft-idx" aria-hidden="true">[ 01 ]</p>
+    </div>
+
+    <div class="mailbox" data-mailbox>
+      <a class="email" href={`mailto:${EMAIL}`} data-email={EMAIL} aria-label={`Copy email address ${EMAIL}`}>
+        {words.map((w) => (
+          <span class="word" aria-hidden="true">
+            {[...w].map((c) => (
+              <span class="ch" style={`--i:${idx++}`}><span class="ch-in"><span>{c}</span><span>{c}</span></span></span>
+            ))}
+          </span>
+        ))}
+      </a>
+      <span class="pill" data-pill aria-hidden="true">Copy email</span>
+      <span class="sr-only" role="status" aria-live="polite" data-status></span>
+    </div>
+
+    <div class="ft-mid">
+      <p class="ft-note">Questions, partnerships or bringing SpotOn to your campus? We read every message.</p>
+      <ul class="ft-rows">
+        {rows.map((r) => (
+          <li>
+            <a href={r.href} target={r.ext ? '_blank' : undefined} rel={r.ext ? 'noopener' : undefined}>
+              <span>{r.label}</span><span class="arr" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="ft-bot">
+      <div class="brandcol"><p class="wm"><strong>Spot</strong>On</p><img src="/media/logo.png" width="44" height="44" alt="" /></div>
+      <nav class="links" aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="/terms">Terms</a>
+        <a href="/privacy">Privacy</a>
+        <a href={APP_STORE} target="_blank" rel="noopener">Download</a>
+      </nav>
+      <div class="end"><p>© 2026 SpotOn</p><p>Parking near campus</p></div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { background: var(--paper); color: var(--ink); font-size: 15px; letter-spacing: -0.005em; padding: clamp(40px, 6vw, 72px) 0 28px; overflow: clip; }
+  .ft { width: min(1320px, 100% - var(--gutter) * 2); margin-inline: auto; }
+  .ft-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .ft-tag { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .ft-tag i { width: 10px; height: 10px; background: var(--ink); display: block; }
+  .ft-idx { font-size: 12px; color: var(--ink-2); font-weight: 600; letter-spacing: .06em; }
+
+  .mailbox { position: relative; margin-top: 20px; background: var(--beige); border-radius: 4px; overflow: hidden; }
+  .email {
+    display: block; padding: clamp(24px, 4vw, 56px) clamp(16px, 2.4vw, 32px); text-decoration: none; color: var(--ink);
+    font-family: var(--font-num); font-weight: 500; text-transform: uppercase; letter-spacing: 0;
+    font-size: clamp(28px, 6.6vw, 112px); line-height: 1; overflow-wrap: anywhere; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .email:focus-visible { outline: 2px solid var(--ink); outline-offset: -6px; border-radius: 4px; }
+  .word { display: inline-block; white-space: nowrap; }
+  @media (min-width: 1068px) { .email { white-space: nowrap; overflow-wrap: normal; } .word { display: inline; } }
+  .ch { display: inline-block; height: 1em; overflow: hidden; vertical-align: top; }
+  .ch-in { display: flex; flex-direction: column; transition: transform .45s cubic-bezier(.22, 1, .36, 1); transition-delay: calc(var(--i) * 18ms); }
+  .ch-in > span { display: block; height: 1em; line-height: 1; }
+  .email:hover .ch-in, .email.is-rolled .ch-in { transform: translateY(-50%); }
+
+  .pill {
+    position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; opacity: 0;
+    padding: 8px 14px; border-radius: 999px; background: #000; color: #fff; white-space: nowrap;
+    font-family: var(--font); font-size: 13px; font-weight: 600; letter-spacing: 0; line-height: 1;
+    transform: translate3d(var(--px, 0), var(--py, 0), 0); transition: opacity .2s ease;
+  }
+  .mailbox:global(.is-hover) .pill, .mailbox:global(.is-copied) .pill { opacity: 1; }
+  @media (hover: none) { .pill { left: 50%; top: auto; bottom: 14px; transform: translateX(-50%); } }
+
+  .ft-mid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px clamp(24px, 6vw, 96px); margin-top: clamp(32px, 5vw, 64px); }
+  .ft-note { font-size: clamp(20px, 2.1vw, 28px); line-height: 1.25; font-weight: 300; letter-spacing: -0.015em; max-width: 460px; color: var(--ink); }
+  .ft-rows { border-top: 1px solid var(--line); }
+  .ft-rows li { border-bottom: 1px solid var(--line); }
+  .ft-rows a { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; text-decoration: none; color: var(--ink); font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+  .arr { display: inline-block; font-size: 16px; transition: transform .25s var(--ease-soft); }
+  @media (hover: hover) { .ft-rows a:hover .arr { transform: translateX(4px); } }
+
+  .ft-bot { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: clamp(40px, 6vw, 80px); padding-top: 18px; border-top: 1px solid var(--line); }
+  .brandcol { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .wm { font-size: 22px; font-weight: 300; letter-spacing: -0.02em; line-height: 1; color: var(--ink); }
+  .wm b { font-weight: 600; }
+  .brandcol img { width: 44px; height: 44px; border-radius: 50%; }
+  .links { display: flex; flex-direction: column; gap: 6px; font-size: 15px; font-weight: 300; }
+  .links a { text-decoration: none; color: var(--ink-2); transition: color .2s ease; }
+  @media (hover: hover) { .links a:hover { color: var(--ink); } }
+  .end { display: flex; flex-direction: column; gap: 6px; text-align: right; font-size: 15px; font-weight: 300; color: var(--ink-2); }
+
+  @media (max-width: 733px) {
+    .ft-mid { grid-template-columns: 1fr; }
+    .ft-bot { grid-template-columns: 1fr; gap: 16px; }
+    .end { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ch-in { transition: none; }
+    .email:hover .ch-in { transform: none; }
+    .arr, .pill { transition: none; }
+  }
+</style>
+
+<script>
+  const box = document.querySelector<HTMLElement>('[data-mailbox]');
+  const link = box?.querySelector<HTMLAnchorElement>('.email');
+  const pill = box?.querySelector<HTMLElement>('[data-pill]');
+  const status = box?.querySelector<HTMLElement>('[data-status]');
+  if (box && link && pill && status) {
+    const email = link.dataset.email || '';
+    let timer = 0;
+    const touch = matchMedia('(hover: none)').matches;
+    const label = touch ? 'Tap to copy' : 'Copy email';
+    pill.textContent = label;
+
+    if (!touch) {
+      box.addEventListener('pointerenter', () => box.classList.add('is-hover'));
+      box.addEventListener('pointerleave', () => box.classList.remove('is-hover'));
+      box.addEventListener('pointermove', (e) => {
+        const r = box.getBoundingClientRect();
+        const w = pill.offsetWidth, h = pill.offsetHeight;
+        const x = Math.min(Math.max(e.clientX - r.left + 14, 0), r.width - w);
+        const y = Math.min(Math.max(e.clientY - r.top + 18, 0), r.height - h);
+        box.style.setProperty('--px', x + 'px');
+        box.style.setProperty('--py', y + 'px');
+      });
+    }
+
+    const done = () => {
+      pill.textContent = 'Copied';
+      status.textContent = 'Email copied';
+      box.classList.add('is-copied');
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        box.classList.remove('is-copied');
+        pill.textContent = label;
+        status.textContent = '';
+      }, 1600);
+    };
+
+    link.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await navigator.clipboard.writeText(email);
+        done();
+      } catch {
+        location.href = 'mailto:' + email;
+      }
+    });
+    link.addEventListener('focus', () => link.classList.add('is-rolled'));
+    link.addEventListener('blur', () => link.classList.remove('is-rolled'));
+  }
+</script>

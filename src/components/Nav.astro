@@ -1,0 +1,162 @@
+---
+import { APP_STORE } from '../config';
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/terms', label: 'Terms' },
+  { href: '/privacy', label: 'Privacy' },
+];
+---
+<header class="nav" id="nav" data-state="top">
+  <div class="nav-shell">
+    <div class="nav-pill">
+      <div class="nav-inner">
+        <a class="brand" href="/" aria-label="SpotOn home">
+          <img src="/media/logo.png" width="22" height="22" alt="" />
+          <span class="wordmark"><b>Spot</b>On</span>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          {links.map((l) => (
+            <a href={l.href} aria-current={path === l.href ? 'page' : undefined}>{l.label}</a>
+          ))}
+        </nav>
+        <div class="nav-end">
+          <a class="btn btn--sm nav-dl" href={APP_STORE} target="_blank" rel="noopener">Download</a>
+          <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
+            <span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="menu" id="menu" aria-hidden="true" inert>
+  <nav class="menu-nav" aria-label="Menu">
+    {links.map((l, i) => (
+      <a class="menu-link" href={l.href} style={`--i:${i}`} aria-current={path === l.href ? 'page' : undefined}>{l.label}</a>
+    ))}
+  </nav>
+</div>
+
+<style>
+  .nav { position: fixed; inset: 0 0 auto 0; z-index: 100; pointer-events: none; }
+  .nav-shell { display: flex; justify-content: center; }
+  .nav-pill {
+    --bar: rgba(247, 247, 244, .8);
+    position: relative; pointer-events: auto;
+    width: 100%; height: var(--nav-h);
+    background: var(--bar);
+    -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+    border-radius: 0;
+    box-shadow: 0 1px 0 var(--line), 0 8px 30px rgba(0, 0, 0, 0);
+    transition: width .55s var(--ease-out), height .55s var(--ease-out), border-radius .55s var(--ease-out), box-shadow .55s var(--ease-out), background-color .4s ease;
+  }
+  .nav[data-state='notch'] .nav-pill {
+    --bar: rgba(247, 247, 244, .82);
+    width: min(680px, calc(100vw - 32px)); height: 56px;
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0), 0 8px 30px rgba(0, 0, 0, .08);
+  }
+  /* concave fillets: the notch reads as cut from the top edge */
+  .nav-pill::before, .nav-pill::after {
+    content: ''; position: absolute; top: 0; width: 14px; height: 14px; pointer-events: none;
+    background: var(--bar);
+    -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+    opacity: 0; transition: opacity .4s ease;
+  }
+  .nav-pill::before { left: -14px; -webkit-mask: radial-gradient(circle at 0 100%, transparent 14px, #000 14.5px); mask: radial-gradient(circle at 0 100%, transparent 14px, #000 14.5px); }
+  .nav-pill::after { right: -14px; -webkit-mask: radial-gradient(circle at 100% 100%, transparent 14px, #000 14.5px); mask: radial-gradient(circle at 100% 100%, transparent 14px, #000 14.5px); }
+  .nav[data-state='notch'] .nav-pill::before, .nav[data-state='notch'] .nav-pill::after { opacity: 1; }
+
+  .nav-inner { height: 100%; width: min(var(--col), 100%); margin-inline: auto; padding-inline: var(--gutter); display: flex; align-items: center; gap: 24px; transition: padding .55s var(--ease-out); }
+  .nav[data-state='notch'] .nav-inner { padding-inline: 20px 12px; }
+  .brand { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ink); margin-right: auto; flex: none; transition: transform .2s var(--ease-soft); }
+  .brand:active { transform: scale(.97); }
+  .brand img { width: 22px; height: 22px; border-radius: 50%; }
+  .wordmark { font-size: 19px; font-weight: 300; letter-spacing: -0.02em; line-height: 1; }
+  .wordmark b { font-weight: 600; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a { font-size: 14px; color: var(--ink-2); text-decoration: none; font-weight: 400; transition: color .2s ease; white-space: nowrap; }
+  .nav-links a[aria-current='page'] { color: var(--ink); }
+  @media (hover: hover) { .nav-links a:hover { color: var(--ink); } }
+  .nav-end { display: flex; align-items: center; gap: 4px; }
+  .nav-toggle { display: none; }
+
+  /* Mobile */
+  @media (max-width: 734px) {
+    .nav-links { display: none; }
+    .nav-inner { gap: 12px; }
+    .nav[data-state='notch'] .nav-pill { width: calc(100vw - 24px); }
+    .nav-end { gap: 2px; }
+    .nav-toggle { display: grid; place-content: center; gap: 6px; width: 44px; height: 44px; margin-right: -12px; border-radius: 50%; }
+    .nav-toggle span { display: block; width: 18px; height: 1.5px; background: var(--ink); border-radius: 2px; transition: transform .45s var(--ease-out); }
+    .nav-toggle[aria-expanded='true'] span:first-child { transform: translateY(3.75px) rotate(45deg); }
+    .nav-toggle[aria-expanded='true'] span:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+    .nav[data-menu='open'] .nav-pill { --bar: var(--paper); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  }
+
+  .menu {
+    position: fixed; inset: 0; z-index: 90; background: var(--paper); padding: calc(var(--nav-h) + 36px) var(--gutter) 40px;
+    opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s linear .35s;
+    display: none; overflow-y: auto;
+  }
+  @media (max-width: 734px) { .menu { display: block; } }
+  .menu.is-open { opacity: 1; visibility: visible; transition: opacity .35s ease, visibility 0s; }
+  .menu-nav { display: flex; flex-direction: column; gap: 6px; }
+  .menu-link {
+    font-size: 28px; line-height: 1.2; font-weight: 600; letter-spacing: -0.025em; color: var(--ink); text-decoration: none; padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    opacity: 0; transform: translate3d(0, 16px, 0);
+    transition: opacity .3s ease, transform .3s var(--ease-soft);
+  }
+  .menu-link[aria-current='page'] { color: var(--ink-2); }
+  .menu.is-open .menu-link { opacity: 1; transform: none; transition: opacity .6s var(--ease-soft) calc(120ms + var(--i) * 40ms), transform .6s var(--ease-soft) calc(120ms + var(--i) * 40ms); }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-pill, .nav-inner, .menu, .menu-link { transition: none !important; }
+  }
+</style>
+
+<script>
+  const nav = document.getElementById('nav') as HTMLElement;
+  const toggle = nav.querySelector('.nav-toggle') as HTMLButtonElement;
+  const menu = document.getElementById('menu') as HTMLElement;
+  const hero = document.getElementById('hero');
+
+  // Morph: bar -> notch, once the user is ~70% through the hero.
+  let threshold = 90;
+  let state: 'top' | 'notch' = 'top';
+  let ticking = false;
+  const measure = () => {
+    threshold = hero ? Math.max(120, hero.offsetHeight * 0.7) : 90;
+  };
+  const update = () => {
+    ticking = false;
+    const y = window.scrollY;
+    const next = state === 'top' ? (y > threshold ? 'notch' : 'top') : y < threshold - 24 ? 'top' : 'notch';
+    if (next !== state) {
+      state = next;
+      nav.dataset.state = state;
+    }
+  };
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener('resize', () => { measure(); update(); });
+  addEventListener('load', () => { measure(); update(); });
+  measure();
+  update();
+
+  // Mobile menu
+  const setOpen = (open: boolean) => {
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    menu.classList.toggle('is-open', open);
+    menu.setAttribute('aria-hidden', String(!open));
+    menu.toggleAttribute('inert', !open);
+    nav.dataset.menu = open ? 'open' : '';
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+  };
+  toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  menu.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setOpen(false); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+  matchMedia('(min-width: 735px)').addEventListener('change', (e) => { if (e.matches) setOpen(false); });
+</script>

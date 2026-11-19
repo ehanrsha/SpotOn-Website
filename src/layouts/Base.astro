@@ -1,0 +1,44 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESC } from '../config';
+
+interface Props { title?: string; description?: string; ogImage?: string; }
+const { title = SITE_TITLE, description = SITE_DESC, ogImage = '/media/hero/hero-end.webp' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const og = new URL(ogImage, Astro.site).href;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#F7F7F4" />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" type="image/png" href="/media/logo.png" />
+    <link rel="apple-touch-icon" href="/media/logo.png" />
+    <link rel="preload" href="/fonts/Switzer-Semibold.otf" as="font" type="font/otf" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SpotOn" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={og} />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <Nav />
+    <main id="top"><slot /></main>
+    <Footer />
+    <script>
+      import '../scripts/reveal';
+    </script>
+  </body>
+</html>

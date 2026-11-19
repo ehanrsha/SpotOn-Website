@@ -1,0 +1,96 @@
+---
+import Base from './Base.astro';
+interface Props { title: string; description: string; }
+const { title, description } = Astro.props;
+---
+<Base title={title} description={description}>
+  <article class="legal">
+    <slot />
+  </article>
+</Base>
+
+<style is:global>
+  .legal { width: min(1240px, 100% - var(--gutter) * 2); margin-inline: auto; padding: clamp(120px, 14vw, 190px) 0 clamp(72px, 9vw, 120px); color: var(--ink-2); font-size: 18px; line-height: 1.6; letter-spacing: -0.01em; font-weight: 300; }
+  .legal .masthead { padding-bottom: clamp(36px, 5vw, 72px); }
+  .legal h1 { font-size: clamp(48px, 6.8vw, 104px); line-height: 1; font-weight: 300; letter-spacing: -0.035em; color: var(--ink); text-wrap: balance; }
+  .legal .dates { display: flex; flex-wrap: wrap; gap: 4px 24px; margin-top: 22px; font-size: 14px; color: #8A8A8E; }
+
+  .legal .layout { display: grid; grid-template-columns: 17rem minmax(0, 54rem); column-gap: clamp(40px, 7vw, 120px); align-items: start; }
+  .legal .toc { position: sticky; top: calc(var(--nav-h) + 24px); align-self: start; }
+  .legal .toc ol { list-style: none; padding: 0; margin: 0; counter-reset: sec; border-top: 1px solid var(--line); }
+  .legal .toc li { margin: 0; counter-increment: sec; border-bottom: 1px solid var(--line); }
+  .legal .toc ol a { display: flex; align-items: center; gap: 14px; min-height: 32px; padding: 5px 0; font-size: 14px; line-height: 1.3; font-weight: 300; letter-spacing: -0.005em; color: var(--ink-2); text-decoration: none; transition: color .2s ease; }
+  .legal .toc ol a::before { content: counter(sec, decimal-leading-zero); flex: none; width: 1.6em; font-variant-numeric: tabular-nums; color: #8A8A8E; transition: color .2s ease; }
+  @media (hover: hover) { .legal .toc ol a:hover { color: var(--ink); } }
+  .legal .toc ol a.is-active { color: var(--ink); font-weight: 600; }
+  .legal .toc ol a.is-active::before { color: var(--ink); }
+  .legal .toc-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 24px; }
+  .legal .toc-cta .toc-btn { display: inline-flex; align-items: center; padding: 11px 20px; border-radius: 980px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; text-decoration: none; white-space: nowrap; }
+  .legal .toc-cta .toc-contact { font-size: 14px; color: var(--ink-2); }
+
+  .legal .content { min-width: 0; }
+  .legal h2 { font-size: clamp(30px, 3.4vw, 54px); line-height: 1.08; font-weight: 300; letter-spacing: -0.03em; color: var(--ink); margin: clamp(56px, 7vw, 88px) 0 20px; scroll-margin-top: calc(var(--nav-h) + 24px); text-wrap: balance; }
+  .legal .lede + h2, .legal .content > h2:first-child { margin-top: clamp(40px, 5vw, 64px); }
+  .legal h2 .num { display: block; font-size: 13px; font-weight: 600; letter-spacing: 0; color: #8A8A8E; margin-bottom: 10px; font-variant-numeric: tabular-nums; }
+  .legal h3 { font-size: 20px; font-weight: 600; color: var(--ink); margin: 32px 0 10px; letter-spacing: -0.015em; }
+  .legal p { margin: 0 0 18px; }
+  .legal strong, .legal b { font-weight: 600; color: var(--ink); }
+  .legal ul, .legal ol.plain { padding-left: 1.3em; margin: 0 0 18px; }
+  .legal .content ul { list-style: disc; }
+  .legal .content ol { padding-left: 1.3em; margin: 0 0 18px; list-style: decimal; }
+  .legal li { margin-bottom: 8px; }
+  .legal .lede { font-size: 20px; line-height: 1.55; }
+  .legal .content a { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(0, 0, 0, .25); text-underline-offset: 3px; transition: text-decoration-color .2s ease; }
+  .legal .content a:hover { text-decoration-color: var(--ink); }
+  .legal code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: .86em; background: var(--bg-alt); padding: .1em .4em; border-radius: 6px; color: var(--ink); }
+  .legal .tablewrap { overflow-x: auto; margin: 0 0 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); }
+  .legal table { border-collapse: collapse; width: 100%; min-width: 30rem; font-size: 15px; }
+  .legal th, .legal td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .legal th { background: var(--bg-alt); color: var(--ink); font-weight: 600; white-space: nowrap; }
+  .legal tr:last-child td { border-bottom: 0; }
+  .legal td:first-child { color: var(--ink); }
+  .legal .callout { background: var(--bg-alt); border-radius: 16px; padding: 18px 22px; margin: 0 0 24px; }
+  .legal .callout p:last-child { margin-bottom: 0; }
+
+  @media (max-width: 900px) {
+    .legal .layout { display: block; }
+    .legal .toc { position: static; margin-bottom: 40px; }
+    .legal .toc ol { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
+    .legal .toc-cta { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 14px 20px; }
+  }
+  @media (max-width: 520px) { .legal .toc ol { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.legal .toc ol a[href^="#"]'));
+  const map = new Map<string, HTMLAnchorElement>();
+  links.forEach((a) => map.set(a.hash.slice(1), a));
+  const heads = Array.from(map.keys()).map((id) => document.getElementById(id)).filter((e): e is HTMLElement => !!e);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const setActive = (id: string) => links.forEach((a) => a.classList.toggle('is-active', a.hash.slice(1) === id));
+
+  if (heads.length) {
+    setActive(heads[0].id);
+    const visible = new Set<string>();
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => (e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id)));
+      const first = heads.find((h) => visible.has(h.id));
+      if (first) setActive(first.id);
+      else {
+        // between headings: the last heading above the viewport top
+        const above = heads.filter((h) => h.getBoundingClientRect().top < 120);
+        if (above.length) setActive(above[above.length - 1].id);
+      }
+    }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+    heads.forEach((h) => io.observe(h));
+  }
+
+  links.forEach((a) => a.addEventListener('click', (e) => {
+    const t = document.getElementById(a.hash.slice(1));
+    if (!t) return;
+    e.preventDefault();
+    t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    history.replaceState(null, '', a.hash);
+    setActive(t.id);
+  }));
+</script>

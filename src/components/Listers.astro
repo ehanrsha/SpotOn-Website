@@ -1,0 +1,81 @@
+---
+import { APP_STORE } from '../config';
+const videos = new Set([2, 3]);
+const cards = [
+  { n: 1, lead: 'Drop a pin.', body: 'Tap the map or use your current location to mark exactly where drivers will park.' },
+  { n: 2, lead: 'Snap a photo.', body: 'Take a picture of your spot in the app so drivers know what to look for.' },
+  { n: 3, lead: 'Set your price.', body: 'Choose an hourly or weekly rate. SpotOn shows a suggested price to get you started.' },
+  { n: 4, lead: 'Pick your dates.', body: 'Open your spot for the days that work for you, from one gameday to the whole semester.' },
+  { n: 5, lead: 'See what you earn.', body: "Before you publish, you see exactly what you keep after SpotOn's 15% fee." },
+  { n: 6, lead: 'Get paid with Stripe.', body: 'Track payouts and lifetime earnings in your seller account. Payouts go straight to your bank.' },
+];
+---
+<section id="listers" class="listers section section--alt">
+  <div class="wrap lh">
+    <h2 class="h-section" data-reveal>Got a driveway?<br />Make it earn.</h2>
+    <p class="lead" data-reveal data-reveal-delay="80">List your spot in a few minutes. Set your own price, pick your dates, and get paid out through Stripe.</p>
+    <p data-reveal data-reveal-delay="140"><a class="link" href={APP_STORE} target="_blank" rel="noopener"><span>Start listing</span></a></p>
+  </div>
+
+  <div class="rail" data-rail tabindex="0" role="region" aria-label="How to list your spot">
+    {cards.map((c, i) => (
+      <article class="lcard" data-lcard>
+        <div class="tile" data-ltile>
+          {videos.has(c.n) ? (
+            <video class="media" muted playsinline loop preload="none" poster={`/media/listers/card-${c.n}.webp`} src={`/media/listers/card-${c.n}.mp4`} data-lvideo={c.n} aria-hidden="true" tabindex="-1"></video>
+          ) : (
+            <img class="media" src={`/media/listers/card-${c.n}.webp`} width="1600" height="1140" alt="" loading="lazy" decoding="async" draggable="false" />
+          )}
+        </div>
+        <p class="cap body" data-lcap><strong>{c.lead}</strong> {c.body}</p>
+      </article>
+    ))}
+  </div>
+
+  <div class="wrap ctrl">
+    <button class="round-btn" type="button" aria-label="Previous" data-prev disabled>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 5.5 8 10 12.5" /></svg>
+    </button>
+    <button class="round-btn" type="button" aria-label="Next" data-next>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+    </button>
+  </div>
+</section>
+
+<style>
+  .listers { container-type: inline-size; overflow: clip; --edge: max(22px, calc((100cqw - 980px) / 2)); }
+  .lh .lead { margin-top: 18px; max-width: 560px; }
+  .lh p:last-child { margin-top: 18px; }
+
+  .rail {
+    display: flex; gap: 20px; margin-top: clamp(36px, 5vw, 64px);
+    overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scroll-padding-inline: var(--edge);
+    padding-inline: var(--edge); scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    cursor: grab;
+  }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+  .rail.is-dragging * { pointer-events: none; }
+  .lcard { flex: none; width: 560px; scroll-snap-align: start; }
+  .tile { position: relative; aspect-ratio: 1600 / 1140; border-radius: var(--radius-card); overflow: hidden; background: #cfcecb; isolation: isolate; will-change: transform, opacity, filter; }
+  .media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .js .tile, .js .cap { opacity: 0; transform: translate3d(0, 60px, 0); filter: blur(16px); }
+  .js .cap { transform: translate3d(0, 24px, 0); filter: none; }
+  .cap { margin-top: 18px; max-width: 92%; font-size: 17px; }
+
+  .ctrl { display: flex; justify-content: flex-end; gap: 12px; margin-top: 28px; }
+
+  @media (max-width: 734px) {
+    .lcard { width: 82cqw; }
+    .rail { gap: 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .js .tile, .js .cap { opacity: 1; transform: none; filter: none; }
+  }
+</style>
+
+<script>
+  import { initListers } from '../scripts/listers';
+  initListers();
+</script>

@@ -1,0 +1,104 @@
+---
+import { APP_STORE } from '../config';
+---
+<section id="hero" class="hero">
+  <div class="hero-text">
+    <h1 class="h-hero in" style="--d:1" aria-label="Gameday parking 4 minutes away at UF" data-hero-words>
+      <span class="hw" aria-hidden="true">
+        <span class="pill" data-pill="event" style="--pill-bg:#CDEFE4;--pill-dot:#14B88A"><span class="pw"><span class="pw-cur">Gameday</span></span></span>
+        <span class="pw pw-plain" data-after="event"><span class="pw-cur">parking</span></span><br class="br-d" />
+        <span class="pill" data-pill="dist" style="--pill-bg:#DCEBFB;--pill-dot:#2F80ED"><span class="pw"><span class="pw-cur">4 minutes</span></span></span>
+        <span class="pw pw-plain" data-after="dist"><span class="pw-cur">away</span></span> <span class="nb">@
+        <span class="pill" data-pill="campus" style="--pill-bg:#D9F5D6;--pill-dot:#22C55E"><span class="pw"><span class="pw-cur">UF</span></span></span></span>
+      </span>
+    </h1>
+    <p class="lead in" style="--d:2">Book a private driveway near campus in seconds, or earn from the one you already have.</p>
+    <div class="actions in" style="--d:3">
+      <a class="btn" href={APP_STORE} target="_blank" rel="noopener">Download on the App Store</a>
+      <a class="link" href="#features"><span>See how it works</span></a>
+    </div>
+  </div>
+
+  <div class="hero-media" data-hero-media>
+    <video class="hero-video" muted playsinline preload="auto" poster="/media/hero/hero-poster.webp" aria-hidden="true" tabindex="-1">
+      <source src="/media/hero/hero.mp4" type="video/mp4" />
+    </video>
+    <img class="hero-end" src="/media/hero/hero-end.webp" width="1080" height="1440" alt="The SpotOn app on an iPhone, showing private driveways near campus" fetchpriority="high" decoding="async" />
+  </div>
+</section>
+
+<style>
+  .hero {
+    --mh: min(calc(100svh - var(--nav-h)), 900px);
+    min-height: 100svh; background: var(--paper);
+    padding-top: var(--nav-h);
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end;
+    column-gap: clamp(24px, 4vw, 64px);
+    padding-inline: max(var(--gutter), calc((100% - 1320px) / 2));
+    overflow: clip;
+  }
+  .hero-text { align-self: center; text-align: left; display: flex; flex-direction: column; align-items: flex-start; padding-block: 48px; }
+  .hero-text .h-hero { font-size: clamp(36px, 3.9vw, 68px); line-height: 1.36; text-wrap: pretty; }
+  .hw { display: block; }
+  .h-hero :global(.nb) { white-space: nowrap; }
+  .h-hero :global(.pill) {
+    display: inline-flex; align-items: baseline; vertical-align: baseline; white-space: nowrap; overflow: hidden;
+    line-height: 1.08; border-radius: .5em; padding: .04em .3em .08em; margin-inline: .02em; font-weight: 300;
+    background: var(--pill-bg); color: var(--ink);
+    transition: background-color .55s ease;
+  }
+  .h-hero :global(.pw) { display: inline-grid; overflow: hidden; white-space: nowrap; padding-bottom: .1em; margin-bottom: -.1em; vertical-align: baseline; }
+  .h-hero :global(.pw > span) { grid-area: 1 / 1; white-space: nowrap; }
+  .h-hero :global(.pw-plain) { overflow: visible; }
+  .h-hero :global(.pw-probe) { visibility: hidden; position: absolute; }
+  .hero-text .lead { max-width: 480px; margin-top: clamp(16px, 2vw, 22px); }
+  .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 28px; margin-top: clamp(22px, 2.6vw, 32px); }
+
+  .in { opacity: 0; animation: heroIn .7s var(--ease-soft) both; animation-delay: calc(250ms + var(--d) * 80ms); }
+  @keyframes heroIn {
+    from { opacity: 0; transform: translate3d(0, 18px, 0); filter: blur(6px); }
+    to { opacity: 1; transform: none; filter: blur(0); }
+  }
+
+  .hero-media {
+    position: relative; flex: none; align-self: end;
+    width: min(55vw, calc(var(--mh) * .75)); aspect-ratio: 3 / 4;
+    background: var(--paper);
+    /* feather the left and top edges so the clip's background melts into the page */
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%), linear-gradient(180deg, transparent 0, #000 7%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(90deg, transparent 0, #000 9%), linear-gradient(180deg, transparent 0, #000 7%);
+    mask-composite: intersect;
+  }
+  .hero-video, .hero-end { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hero-end { opacity: 0; transition: opacity .35s ease; }
+  .hero-media.is-ended .hero-end, .hero-media.no-video .hero-end { opacity: 1; }
+  :global(html:not(.js)) .hero-end { opacity: 1; }
+  :global(html:not(.js)) .in { opacity: 1; animation: none; }
+
+  @media (max-width: 1068px) {
+    .hero-media { width: min(48vw, calc(var(--mh) * .75)); }
+  }
+  @media (max-width: 733px) {
+    /* Apple-style: short headline on top, phone + hand fill the rest of the first screen */
+    .hero { display: flex; flex-direction: column; align-items: stretch; padding-inline: 0; min-height: 100svh; }
+    .hero-text { flex: none; align-self: stretch; text-align: center; align-items: center; padding: 28px var(--gutter) 0; }
+    .hero-text .h-hero { font-size: clamp(30px, 8.6vw, 44px); }
+    .h-hero :global(.br-d) { display: none; }
+    .hero-text .lead, .actions { display: none; }
+    .hero-media { flex: 1 1 auto; width: 100%; aspect-ratio: auto; min-height: 118vw; align-self: stretch; margin-top: auto;
+      -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 8%); mask-image: linear-gradient(180deg, transparent 0, #000 8%); }
+    .hero-video, .hero-end { object-position: 50% 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .in { animation: none; opacity: 1; }
+    .hero-end { transition: none; }
+  }
+</style>
+
+<script>
+  import { initHero } from '../scripts/hero';
+  import { initHeroWords } from '../scripts/heroWords';
+  initHero();
+  initHeroWords();
+</script>

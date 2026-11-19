@@ -1,0 +1,86 @@
+---
+const schools = [
+  { full: 'University of Florida', src: '/media/logos/uf.svg' },
+  { full: 'Florida State University', src: '/media/logos/fsu.svg' },
+  { full: 'University of Miami', src: '/media/logos/miami.svg' },
+  { full: 'University of South Florida', src: '/media/logos/usf.svg' },
+  { full: 'Georgia Tech', src: '/media/logos/gt.svg' },
+  { full: 'Emory University', src: '/media/logos/emory.svg' },
+  { full: 'University of North Florida', src: '/media/logos/unf.svg' },
+];
+---
+<section class="trusted" aria-labelledby="trusted-h" data-trusted>
+  <p id="trusted-h" class="tb-label">Trusted by students at</p>
+  <div class="tb-view">
+    <ul class="tb-track">
+      {schools.map((s, i) => (
+        <li class="tile" style={`--i:${i}`} title={s.full}><img src={s.src} alt={s.full} width="140" height="44" decoding="async" /></li>
+      ))}
+      {schools.map((s) => (
+        <li class="tile dup" title={s.full} aria-hidden="true"><img src={s.src} alt="" width="140" height="44" decoding="async" /></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .trusted { background: var(--paper); padding: clamp(32px, 4vw, 56px) 0 clamp(56px, 7vw, 96px); }
+  .tb-label { text-align: center; font-size: 15px; font-weight: 300; color: var(--ink-2); margin-bottom: 20px; }
+  .tb-view { width: min(1200px, 100% - var(--gutter) * 2); margin-inline: auto; }
+  .tb-track { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+  .tile {
+    display: grid; place-items: center; height: 88px; padding: 0 8px; border-radius: 12px;
+    background: #EFEEE9; border: 1px solid rgba(40, 40, 43, .06);
+  }
+  .tile img { max-height: 52px; max-width: 80%; width: auto; height: auto; object-fit: contain; }
+  .dup { display: none; }
+
+  /* entrance (only when JS is running and motion is allowed) */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .trusted:not(.is-in) .tb-label { opacity: 0; transform: translate3d(0, 14px, 0); }
+    :global(.js) .trusted .tb-label { transition: opacity .6s cubic-bezier(.22, 1, .36, 1), transform .6s cubic-bezier(.22, 1, .36, 1); }
+    :global(.js) .trusted:not(.is-in) .tile { opacity: 0; transform: translate3d(0, 28px, 0); }
+    :global(.js) .trusted .tile { transition: opacity .7s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1); transition-delay: calc(180ms + var(--i, 0) * 90ms); }
+  }
+
+  @media (max-width: 1068px) {
+    .tb-track { grid-template-columns: repeat(8, 1fr); }
+    .tile { grid-column: span 2; }
+    .tile:nth-child(7) { grid-column: 4 / span 2; }
+    .dup { display: none; }
+  }
+  @media (max-width: 733px) {
+    .tb-view { width: 100%; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+    .tb-track { display: flex; width: max-content; gap: 0; animation: tb-scroll 32s linear infinite; }
+    .tb-view:hover .tb-track { animation-play-state: paused; }
+    .tile { flex: none; grid-column: auto; width: 132px; height: 72px; margin-right: 12px; }
+    .tile:nth-child(7) { grid-column: auto; }
+    .tile img { max-height: 36px; }
+    .dup { display: grid; }
+    @media (prefers-reduced-motion: no-preference) {
+      :global(.js) .trusted .tile { transition: none; opacity: 1; transform: none; }
+      :global(.js) .trusted .tb-view { transition: opacity .7s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1); }
+      :global(.js) .trusted:not(.is-in) .tb-view { opacity: 0; transform: translate3d(0, 24px, 0); }
+    }
+  }
+  @keyframes tb-scroll { to { transform: translate3d(-50%, 0, 0); } }
+  @media (max-width: 733px) and (prefers-reduced-motion: reduce) {
+    .tb-view { width: min(1200px, 100% - var(--gutter) * 2); overflow: visible; -webkit-mask: none; mask: none; }
+    .tb-track { display: grid; width: auto; grid-template-columns: 1fr 1fr; gap: 10px; animation: none; }
+    .tile { width: auto; margin: 0; height: 64px; }
+    .dup { display: none; }
+  }
+</style>
+
+<script>
+  const el = document.querySelector<HTMLElement>('[data-trusted]');
+  if (el) {
+    if (!('IntersectionObserver' in window)) el.classList.add('is-in');
+    else {
+      const io = new IntersectionObserver((es) => {
+        if (es.some((e) => e.isIntersecting)) { el.classList.add('is-in'); io.disconnect(); }
+      }, { threshold: 0.3 });
+      io.observe(el);
+    }
+  }
+</script>
