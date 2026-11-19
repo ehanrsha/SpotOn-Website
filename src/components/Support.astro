@@ -1,0 +1,68 @@
+---
+// Ionicons 7.4.0 outline glyphs (MIT)
+const points = [
+  { lead: 'Message anyone.', body: 'Chat with your host or renter right from the booking.', d: ['M87.49 380c1.19-4.38-1.44-10.47-3.95-14.86a44.86 44.86 0 00-2.54-3.8 199.81 199.81 0 01-33-110C47.65 139.09 140.73 48 255.83 48 356.21 48 440 117.54 459.58 209.85a199 199 0 014.42 41.64c0 112.41-89.49 204.93-204.59 204.93-18.3 0-43-4.6-56.47-8.37s-26.92-8.77-30.39-10.11a31.09 31.09 0 00-11.12-2.07 30.71 30.71 0 00-12.09 2.43l-67.83 24.48a16 16 0 01-4.67 1.22 9.6 9.6 0 01-9.57-9.74 15.85 15.85 0 01.6-3.29z'] },
+  { lead: 'Manage your listings.', body: 'Remove a spot with a swipe from your seller account.', d: ['M80 212v236a16 16 0 0016 16h96V328a24 24 0 0124-24h80a24 24 0 0124 24v136h96a16 16 0 0016-16V212', 'M480 256L266.89 52c-5-5.28-16.69-5.34-21.78 0L32 256M400 179V64h-48v69'] },
+  { lead: 'Report and block.', body: 'Flag a listing or a user and our team takes a look.', d: ['M80 464V68.14a8 8 0 014-6.9C91.81 56.66 112.92 48 160 48c64 0 145 48 192 48a199.53 199.53 0 0077.23-15.77 2 2 0 012.77 1.85v219.36a4 4 0 01-2.39 3.65C421.37 308.7 392.33 320 352 320c-48 0-128-32-192-32s-80 16-80 16'] },
+  { lead: 'List now, get paid later.', body: 'Publish your first spot with no business details. Add payout info when your first booking comes in.', d: ['M256 64C150 64 64 150 64 256s86 192 192 192 192-86 192-192S362 64 256 64z', 'M256 128v144h96'] },
+];
+---
+<section id="support" class="support section">
+  <div class="copy">
+    <p class="eyebrow" data-reveal>Support</p>
+    <h2 class="h-section" data-reveal data-reveal-delay="60">Any trouble?<br />We have your back.</h2>
+    <p class="lead intro" data-reveal data-reveal-delay="120">Every booking comes with tools to sort things out fast, for drivers and for hosts.</p>
+    <ul class="points">
+      {points.map((p, i) => (
+        <li data-reveal data-reveal-delay={160 + i * 60}>
+          <span class="ico" aria-hidden="true">
+            <svg viewBox="0 0 512 512" width="20" height="20" fill="none" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10">
+              {p.d.map((d) => <path d={d} />)}
+            </svg>
+          </span>
+          <p class="body"><strong>{p.lead}</strong> {p.body}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="media" data-support-media>
+    <video class="sv" muted playsinline loop preload="metadata" poster="/media/support/support-poster.webp" aria-label="A hand holding an iPhone showing a SpotOn conversation" data-support-video>
+      <source src="/media/support/support.mp4" type="video/mp4" />
+    </video>
+  </div>
+</section>
+
+<style>
+  .support { background: var(--paper); overflow: hidden; }
+  .copy { width: min(1240px, 100% - var(--gutter) * 2); margin-inline: auto; position: relative; z-index: 1; }
+  .copy > * { max-width: 40%; }
+  .intro { margin-top: 20px; max-width: 460px; }
+  .points { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: clamp(32px, 4vw, 48px); }
+  .points li { display: flex; flex-direction: column; gap: 12px; }
+  .points .body { font-size: 17px; }
+  .ico { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #28282B; color: #fff; }
+  .ico svg { width: 20px; height: 20px; }
+  .media { position: absolute; right: 0; bottom: 0; width: min(58vw, 1100px); aspect-ratio: 4 / 3; margin: 0; padding: 0; }
+  .sv { width: 100%; height: 100%; object-fit: cover; background: var(--paper); }
+  .support { min-height: min(43.5vw, 825px); }
+
+  @media (min-width: 1069px) { .points { grid-template-columns: 1fr 1fr; max-width: 40%; } }
+  @media (max-width: 1068px) {
+    .support { padding-bottom: 0; min-height: 0; }
+    .copy > *, .copy .points { max-width: none; }
+    .copy .intro { max-width: 520px; }
+    .points { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .media { position: relative; right: auto; bottom: auto; width: min(100%, 900px); margin: clamp(24px, 4vw, 40px) 0 0 auto; }
+  }
+  @media (max-width: 734px) {
+    .points { grid-template-columns: 1fr; }
+    .points li { flex-direction: row; gap: 14px; }
+    .media { width: 100vw; margin-top: 24px; }
+  }
+</style>
+
+<script>
+  import { initSupport } from '../scripts/support';
+  initSupport();
+</script>

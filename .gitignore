@@ -4,3 +4,8 @@
 !.dev.vars.example
 .env*
 !.env.example
+
+# astro
+node_modules
+dist
+.astro

@@ -1,0 +1,45 @@
+---
+---
+<section id="morph" class="morph section">
+  <div class="wrap center">
+    <p class="eyebrow" data-reveal>Everything in one place</p>
+    <h2 class="h-section" data-reveal data-reveal-delay="80">One app. Every spot.</h2>
+  </div>
+
+  <div class="morph-media" data-morph data-reveal="scale" data-reveal-delay="120">
+    <picture>
+      <source media="(max-width: 734px)" srcset="/media/morph/morph-poster-m.webp" width="864" height="1536" />
+      <img class="morph-poster" src="/media/morph/morph-poster.webp" width="1600" height="900" alt="SpotOn showing every nearby driveway, stadium and campus spot in one app" loading="lazy" decoding="async" />
+    </picture>
+    <video class="morph-video" muted playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
+    <button class="replay round-btn" type="button" aria-label="Replay animation" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.6-5.9" /><path d="M4 4v4.5h4.5" /></svg>
+    </button>
+  </div>
+</section>
+
+<style>
+  .morph { background: var(--bg); overflow: clip; }
+  .morph-media {
+    position: relative; width: min(1400px, 100%); margin: clamp(24px, 4vw, 56px) auto 0;
+    height: min(56.25vw, 78svh);
+  }
+  .morph-poster, .morph-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  .morph-poster { transition: opacity .5s ease .1s; }
+  .morph-media.is-playing .morph-poster { opacity: 0; }
+  .morph-video { opacity: 0; transition: opacity .5s ease; }
+  .morph-media.is-playing .morph-video { opacity: 1; }
+  .replay { position: absolute; right: clamp(16px, 4vw, 56px); bottom: clamp(8px, 2vw, 24px); width: 44px; height: 44px; background: var(--bg-alt); z-index: 2; animation: pop .5s var(--ease-soft) both; }
+  .replay svg { width: 20px; height: 20px; }
+  @keyframes pop { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: none; } }
+  @media (max-width: 734px) {
+    .morph-media { height: auto; aspect-ratio: 9 / 16; }
+    .replay { right: 16px; bottom: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .replay { animation: none; } }
+</style>
+
+<script>
+  import { initMorph } from '../scripts/morph';
+  initMorph();
+</script>
