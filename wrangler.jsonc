@@ -5,6 +5,10 @@
   "observability": {
     "enabled": true
   },
+  // The site is built with Astro, so build it before every deploy.
+  "build": {
+    "command": "npm run build"
+  },
   "assets": {
     "directory": "./dist"
   },
