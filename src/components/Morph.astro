@@ -19,7 +19,10 @@
 <style>
   .morph { background: var(--bg); }
   .mx-track { position: relative; height: 280vh; height: 280svh; }
-  .mx-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  /* lvh, not svh: on iOS Safari the page shows through the floating toolbar and the toolbar
+     collapses while scrolling, so a 100svh sticky ends above the true bottom of the screen
+     and the phone looked sliced off there. 100lvh always reaches the real screen bottom. */
+  .mx-sticky { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; }
   .mx-poster, .mx-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
   .mx-poster { object-fit: cover; }
   .mx-canvas { opacity: 0; }
