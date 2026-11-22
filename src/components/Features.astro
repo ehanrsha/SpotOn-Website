@@ -1,14 +1,20 @@
 ---
+// "How it works" — Apple closer-look style with the real app.
+// Each step plays a screen recording of SpotOn inside a high-res iPhone 17 Pro frame,
+// with Apple-style press circles on every tap. Steps change with a layered slide
+// (iPhone Air "Ceramic Shield" style): the phone and a soft backing layer travel at
+// different speeds. Media lives in public/media/features-app (see scripts/features.ts
+// for the tap timeline per step).
 const steps = [
-  { label: 'Find a spot', lead: 'Find a spot.', body: 'Open SpotOn and see private driveways near you, with the hourly price right on the card.' },
-  { label: 'Gameday', lead: 'Gameday, handled.', body: 'Search the stadium, your class or any address and book a spot before the crowds show up.' },
-  { label: 'Book by the hour', lead: 'Book by the hour.', body: 'Pick your hours and your car. You see the full total before you reserve.' },
-  { label: 'Pay your way', lead: 'Pay your way.', body: 'Card, Link, Cash App Pay, Klarna and more, processed securely by Stripe.' },
-  { label: 'Your reservation', lead: 'Always know your time.', body: 'Your booking shows the address, a photo of the spot and how long you have left.' },
-  { label: 'Message your host', lead: 'Talk to your host.', body: 'Message the host straight from your booking if you need directions or more time.' },
+  { id: 'find', label: 'Find a spot', lead: 'Find a spot.', body: 'Open SpotOn and see private driveways near you, with the hourly price right on the card.' },
+  { id: 'gameday', label: 'Gameday', lead: 'Gameday, handled.', body: 'Search the stadium, your class or any address and book a spot before the crowds show up.' },
+  { id: 'book', label: 'Book by the hour', lead: 'Book by the hour.', body: 'Spin to the hours you need now, or tap Schedule to plan ahead. You see the full total before you reserve.' },
+  { id: 'pay', label: 'Pay your way', lead: 'Pay your way.', body: 'Card, Link, Cash App Pay, Klarna and more, processed securely by Stripe.' },
+  { id: 'reservation', label: 'Your reservation', lead: 'Always know your time.', body: 'Your booking shows the address, a photo of the spot and how long you have left.' },
+  { id: 'message', label: 'Message your host', lead: 'Talk to your host.', body: 'Message the host straight from your booking if you need directions or more time.' },
 ];
-const N = steps.length;
-const idx = steps.map((_, i) => i + 1);
+const chevron = (d: string) => `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${d}" /></svg>`;
+const UP = 'M3.5 10 8 5.5 12.5 10', DOWN = 'M3.5 6 8 10.5 12.5 6', LEFT = 'M10 3.5 5.5 8 10 12.5', RIGHT = 'M6 3.5 10.5 8 6 12.5';
 ---
 <section id="features" class="features">
   <div class="fx-head wrap center">
@@ -16,67 +22,111 @@ const idx = steps.map((_, i) => i + 1);
     <h2 class="h-section" data-reveal data-reveal-delay="80">Parking, solved<br class="br-m" /> in a few taps.</h2>
   </div>
 
-  <div class="fx-track" style={`--n:${N}`} data-fx-track>
-    <div class="fx-sticky" data-fx-sticky>
-      <div class="fx-card">
-        <div class="fx-chevs" aria-label="Steps">
-          <button class="round-btn fx-prev" type="button" aria-label="Previous step" data-fx-prev>
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10 8 5.5 12.5 10" /></svg>
-          </button>
-          <button class="round-btn fx-next" type="button" aria-label="Next step" data-fx-next>
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6 8 10.5 12.5 6" /></svg>
-          </button>
-        </div>
-
-        <div class="fx-ui">
-          <div class="fx-pills" role="group" aria-label="How SpotOn works" data-fx-pills>
-            {steps.map((s, i) => (
-              <button class="fx-pill" type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-step={i}>
-                <span class="fx-ico" aria-hidden="true"><i></i><i></i></span>
-                <span class="fx-label">{s.label}</span>
-              </button>
-            ))}
-          </div>
-          <div class="fx-desc" aria-live="polite">
-            {steps.map((s, i) => (
-              <p class={`body${i === 0 ? ' is-active' : ''}`} data-desc={i}><strong>{s.lead}</strong> {s.body}</p>
-            ))}
+  <div class="fx-card" data-fx>
+    <div class="fx-stage" aria-hidden="true">
+      {steps.map((s, i) => (
+        <div class={`fx-slide${i === 0 ? ' is-active' : ''}`} data-slide={i} data-id={s.id}>
+          <div class="fx-backer"></div>
+          <div class="fx-device">
+            <div class="fx-screen">
+              <img class="fx-poster" src={`/media/features-app/${s.id}.webp`} alt="" decoding="async" loading={i === 0 ? 'eager' : 'lazy'} />
+              <video class="fx-video" muted playsinline preload="none" disablepictureinpicture tabindex="-1"></video>
+              <div class="fx-taps"></div>
+            </div>
+            <img class="fx-frame" src="/media/features-app/iphone-17-pro-silver.png" width="1758" height="3664" alt="" decoding="async" />
           </div>
         </div>
+      ))}
+    </div>
 
-        <div class="fx-stage" aria-hidden="true">
-          {idx.map((n) => (
-            <img
-              class="fx-layer fx-still"
-              style={n === 1 ? 'opacity:1' : 'opacity:0'}
-              src={`/media/features/pose-${n}.webp`}
-              data-m={`/media/features/pose-${n}-m.webp`}
-              width="1600" height="900" alt="" loading="lazy" decoding="async"
-            />
+    <div class="fx-chevs" aria-label="Steps">
+      <button class="round-btn" type="button" aria-label="Previous step" data-fx-prev set:html={chevron(UP)} />
+      <button class="round-btn" type="button" aria-label="Next step" data-fx-next set:html={chevron(DOWN)} />
+    </div>
+
+    <div class="fx-ui">
+      <div class="fx-pills" role="group" aria-label="How SpotOn works" data-fx-pills>
+        {steps.map((s, i) => (
+          <button class="fx-pill" type="button" aria-pressed={i === 0 ? 'true' : 'false'} data-step={i}>
+            <span class="fx-ico" aria-hidden="true"><i></i><i></i></span>
+            <span class="fx-label">{s.label}</span>
+          </button>
+        ))}
+      </div>
+      <div class="fx-descrow">
+        <button class="round-btn fx-mnav" type="button" aria-label="Previous step" data-fx-prev set:html={chevron(LEFT)} />
+        <div class="fx-desc" aria-live="polite">
+          {steps.map((s, i) => (
+            <p class={`body${i === 0 ? ' is-active' : ''}`} data-desc={i}><strong>{s.lead}</strong> {s.body}</p>
           ))}
         </div>
+        <button class="round-btn fx-mnav" type="button" aria-label="Next step" data-fx-next set:html={chevron(RIGHT)} />
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .features { padding: clamp(80px, 11vw, 140px) 0 0; background: var(--bg-alt); }
+  .features { padding: clamp(80px, 11vw, 140px) 0 clamp(40px, 5vw, 72px); background: var(--bg-alt); }
   .fx-head { padding-bottom: clamp(36px, 5vw, 64px); }
   .br-m { display: none; }
   @media (max-width: 734px) { .br-m { display: inline; } }
 
-  .fx-track { height: calc((var(--n) + .5) * 100vh); height: calc((var(--n) + .5) * 100svh); position: relative; }
-  .fx-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; }
   .fx-card {
-    position: absolute; top: 68px; right: 24px; bottom: 24px; left: 24px;
-    background: var(--paper); border-radius: var(--radius-card); overflow: hidden;
-    display: grid; grid-template-columns: 38% 1fr; isolation: isolate;
+    position: relative; margin: 0 24px; min-height: 560px;
+    height: min(calc((100vw - 48px) * 9 / 16), calc(100svh - 96px));
+    background: var(--paper); border-radius: var(--radius-card); overflow: hidden; isolation: isolate;
+    display: flex; align-items: center;
   }
+
+  /* ── Stage: one slide per step, the phone sits in the right ~60% ── */
+  .fx-stage { position: absolute; inset: 0 0 0 38%; }
+  .fx-slide {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    visibility: hidden; pointer-events: none;
+  }
+  .fx-slide.is-active, .fx-slide.is-leaving { visibility: visible; }
+  .fx-device {
+    position: relative; height: 86%; aspect-ratio: 1758 / 3664;
+    filter: drop-shadow(0 30px 40px rgba(40, 40, 43, .16)) drop-shadow(0 8px 14px rgba(40, 40, 43, .08));
+  }
+  .fx-frame { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+  /* Screen opening of the mockup: x 76–1683, y 84–3579 of 1758×3664, ~55pt corners. */
+  .fx-screen {
+    position: absolute; left: 4.323%; top: 2.293%; width: 91.468%; height: 95.415%;
+    border-radius: 13.7% / 6.3%; overflow: hidden; background: #000; z-index: 1;
+  }
+  .fx-poster, .fx-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .fx-video { opacity: 0; }
+  .fx-video.is-on { opacity: 1; }
+
+  /* Backing layer for the layered slide (iPhone Air style). */
+  .fx-backer {
+    position: absolute; height: 80%; aspect-ratio: 1758 / 3664; border-radius: 12% / 6%;
+    background: linear-gradient(160deg, #ecebe7, #dcdbd6); opacity: 0;
+  }
+
+  /* ── Press circle (Apple-style touch indicator) ── */
+  .fx-taps { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
+  .fx-taps :global(.fx-tap) {
+    position: absolute; width: 13%; aspect-ratio: 1; margin: -6.5% 0 0 -6.5%; border-radius: 50%;
+    background: rgba(255, 255, 255, .62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    box-shadow: 0 0 0 1.5px rgba(255, 255, 255, .9), 0 6px 18px rgba(0, 0, 0, .22), inset 0 0 0 1px rgba(0, 0, 0, .06);
+    animation: fx-tap .9s cubic-bezier(.22, 1, .36, 1) both;
+  }
+  .fx-taps :global(.fx-tap.is-drag) { animation: none; }
+  @keyframes fx-tap {
+    0% { opacity: 0; transform: scale(.55); }
+    18% { opacity: 1; transform: scale(1); }
+    36% { transform: scale(.82); }
+    56% { opacity: 1; transform: scale(.9); }
+    100% { opacity: 0; transform: scale(1.25); }
+  }
+
   .fx-chevs { position: absolute; left: 28px; top: 50%; transform: translateY(-50%); z-index: 3; display: flex; flex-direction: column; gap: 10px; }
   .fx-chevs .round-btn { width: 40px; height: 40px; }
 
-  .fx-ui { align-self: center; padding: 0 12px 0 clamp(84px, 7vw, 100px); position: relative; z-index: 2; }
+  .fx-ui { position: relative; z-index: 2; width: 38%; padding: 0 12px 0 clamp(84px, 7vw, 100px); }
   .fx-pills { display: flex; flex-direction: column; gap: 10px; }
   .fx-pill {
     display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
@@ -93,42 +143,40 @@ const idx = steps.map((_, i) => i + 1);
   .fx-pill[aria-pressed='true'] .fx-ico i { background: #fff; }
   .fx-pill[aria-pressed='true'] .fx-ico i:last-child { transform: rotate(0deg); }
 
-  .fx-desc { display: grid; margin-top: 12px; background: var(--bg-alt); border-radius: 24px; padding: 20px 24px; }
+  .fx-descrow { margin-top: 12px; }
+  .fx-mnav { display: none; }
+  .fx-desc { display: grid; background: var(--bg-alt); border-radius: 24px; padding: 20px 24px; }
   .fx-desc p { grid-area: 1 / 1; opacity: 0; transform: translate3d(0, 8px, 0); transition: opacity .3s ease, transform .3s var(--ease-soft); pointer-events: none; }
   .fx-desc p.is-active { opacity: 1; transform: none; pointer-events: auto; transition-delay: .06s; }
 
-  .fx-stage { position: relative; min-width: 0; min-height: 0; }
-  .fx-stage :global(.fx-layer) {
-    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
-    transition: opacity .12s linear;
-  }
-  .fx-sticky:global(.is-soft) .fx-stage :global(.fx-layer) { transition-duration: .35s; }
-
-  /* ── Tablet ── */
   @media (max-width: 1068px) {
-    .fx-card { grid-template-columns: 44% 1fr; }
-    .fx-ui { padding-left: 80px; }
+    .fx-ui { width: 44%; padding-left: 80px; }
+    .fx-stage { left: 44%; }
     .fx-chevs { left: 20px; }
     .fx-pill { font-size: 16px; }
   }
 
-  /* ── Mobile: stage on top, chips + description below ── */
+  /* Mobile (Apple's layout): phone on top, chips, then a description card with ‹ ›. */
   @media (max-width: 734px) {
-    .fx-card { top: 64px; right: 12px; bottom: 12px; left: 12px; display: flex; flex-direction: column; border-radius: 24px; }
+    .fx-card { margin: 0 12px; height: auto; min-height: 0; display: block; border-radius: 24px; }
+    .fx-stage { position: relative; inset: auto; height: min(118vw, 60svh); overflow: hidden; }
+    .fx-device { height: 88%; }
     .fx-chevs { display: none; }
-    .fx-stage { order: 1; flex: 1 1 auto; max-height: 62svh; }
-    .fx-ui { order: 2; flex: none; align-self: stretch; padding: 0 0 18px; min-width: 0; }
+    .fx-ui { width: auto; padding: 4px 0 18px; }
     .fx-pills { flex-direction: row; gap: 8px; overflow-x: auto; padding: 4px 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
     .fx-pills::-webkit-scrollbar { display: none; }
     .fx-pill { width: auto; flex: none; min-height: 40px; padding: 8px 16px; font-size: 15px; }
     .fx-ico { display: none; }
     .fx-pill[aria-pressed='true'] { background: var(--ink-brand); color: #fff; }
-    .fx-desc { margin: 10px 16px 0; background: none; padding: 0; min-height: 96px; }
-    .fx-desc p { font-size: 17px; }
+    .fx-descrow { display: flex; align-items: center; gap: 8px; margin: 12px 12px 0; }
+    .fx-mnav { display: inline-grid; flex: none; width: 36px; height: 36px; }
+    .fx-desc { flex: 1; min-height: 112px; align-items: center; padding: 16px 18px; border-radius: 20px; }
+    .fx-desc p { font-size: 16px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .fx-desc p, .fx-ico, .fx-ico i { transition: none; }
+    .fx-taps :global(.fx-tap) { animation: none; opacity: 0; }
   }
 </style>
 

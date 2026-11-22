@@ -58,7 +58,9 @@ const points = [
   @media (max-width: 734px) {
     .points { grid-template-columns: 1fr; }
     .points li { flex-direction: row; gap: 14px; }
-    .media { width: 100vw; margin-top: 24px; }
+    /* Taller frame on phones: the video fills the height and trims the empty sides, so the phone reads ~1.6x larger. */
+    .media { width: 100vw; aspect-ratio: 5 / 6; margin-top: 8px; }
+    .sv { object-position: 52% 100%; }
   }
 </style>
 

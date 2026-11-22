@@ -1,42 +1,35 @@
 ---
+// "One app. Every spot." — AirPods-page style scroll sequence. While the track scrolls
+// past, a pinned canvas scrubs through pre-rendered frames: a phone rises under the
+// headline, a second phone slides out from behind it, and both drift up out of frame.
 ---
-<section id="morph" class="morph section">
-  <div class="wrap center">
-    <p class="eyebrow" data-reveal>Everything in one place</p>
-    <h2 class="h-section" data-reveal data-reveal-delay="80">One app. Every spot.</h2>
-  </div>
-
-  <div class="morph-media" data-morph data-reveal="scale" data-reveal-delay="120">
-    <picture>
-      <source media="(max-width: 734px)" srcset="/media/morph/morph-poster-m.webp" width="864" height="1536" />
-      <img class="morph-poster" src="/media/morph/morph-poster.webp" width="1600" height="900" alt="SpotOn showing every nearby driveway, stadium and campus spot in one app" loading="lazy" decoding="async" />
-    </picture>
-    <video class="morph-video" muted playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
-    <button class="replay round-btn" type="button" aria-label="Replay animation" hidden>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.6-5.9" /><path d="M4 4v4.5h4.5" /></svg>
-    </button>
+<section id="morph" class="morph">
+  <div class="mx-track" data-mx>
+    <div class="mx-sticky">
+      <img class="mx-poster" src="/media/morph-3d/desktop/001.webp" width="1600" height="900" alt="SpotOn on two phones: listing a driveway and finding a spot nearby" decoding="async" data-mx-poster />
+      <canvas class="mx-canvas" aria-hidden="true" data-mx-canvas></canvas>
+      <div class="mx-head wrap center" data-mx-head>
+        <p class="eyebrow">Everything in one place</p>
+        <h2 class="h-section">One app. Every spot.</h2>
+      </div>
+    </div>
   </div>
 </section>
 
 <style>
-  .morph { background: var(--bg); overflow: clip; }
-  .morph-media {
-    position: relative; width: min(1400px, 100%); margin: clamp(24px, 4vw, 56px) auto 0;
-    height: min(56.25vw, 78svh);
+  .morph { background: var(--bg); }
+  .mx-track { position: relative; height: 280vh; height: 280svh; }
+  .mx-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+  .mx-poster, .mx-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .mx-poster { object-fit: cover; }
+  .mx-canvas { opacity: 0; }
+  .mx-canvas.is-ready { opacity: 1; }
+  .mx-head { position: relative; z-index: 1; padding-top: clamp(72px, 12vh, 140px); will-change: transform, opacity; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mx-track { height: auto; }
+    .mx-sticky { position: relative; height: min(56.25vw, 90svh); min-height: 520px; }
   }
-  .morph-poster, .morph-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-  .morph-poster { transition: opacity .5s ease .1s; }
-  .morph-media.is-playing .morph-poster { opacity: 0; }
-  .morph-video { opacity: 0; transition: opacity .5s ease; }
-  .morph-media.is-playing .morph-video { opacity: 1; }
-  .replay { position: absolute; right: clamp(16px, 4vw, 56px); bottom: clamp(8px, 2vw, 24px); width: 44px; height: 44px; background: var(--bg-alt); z-index: 2; animation: pop .5s var(--ease-soft) both; }
-  .replay svg { width: 20px; height: 20px; }
-  @keyframes pop { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: none; } }
-  @media (max-width: 734px) {
-    .morph-media { height: auto; aspect-ratio: 9 / 16; }
-    .replay { right: 16px; bottom: 16px; }
-  }
-  @media (prefers-reduced-motion: reduce) { .replay { animation: none; } }
 </style>
 
 <script>
