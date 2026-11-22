@@ -17,9 +17,11 @@ const EVENT: Item[] = ['Gameday', 'Graduation', 'Class', 'Concert', 'Move-in day
 const DISTANCE: Item[] = ['4 minutes', '100 steps', '0.2 miles', '2 blocks', '3 minutes', '300 feet', '1 block', '5 minutes'].map((word) => ({ word, after: 'away' }));
 const CAMPUS: Item[] = ['UF', 'Ohio State', 'UT Austin', 'Michigan', 'UCLA', 'Georgia Tech', 'Alabama', 'USC', 'FSU', 'Penn State', 'NYU', 'Miami'].map((word) => ({ word }));
 
-const DUR_W = 650;
-const DUR_T = 520;
-const EASE = 'cubic-bezier(.22,1,.36,1)';
+// The highlight and the words share one soft curve: the pill grows while the new word
+// rises into it, and the text after the pill glides along. Lines never re-wrap (see Hero.astro).
+const DUR_W = 720;
+const DUR_T = 600;
+const EASE = 'cubic-bezier(.32,.72,0,1)';
 
 function swapText(pw: HTMLElement, text: string) {
   const old = pw.querySelector<HTMLElement>('.pw-cur');

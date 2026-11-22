@@ -9,3 +9,8 @@
 node_modules
 dist
 .astro
+
+# Blender working files (regenerate with assets/3d/build_scene.py)
+assets/3d/*.blend
+assets/3d/*.blend1
+assets/3d/render/

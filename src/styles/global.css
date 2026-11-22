@@ -25,7 +25,7 @@
   --font: 'Switzer', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --gutter: 22px;
   --col: 980px;
-  --nav-h: 52px;
+  --nav-h: 60px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
