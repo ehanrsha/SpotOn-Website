@@ -51,7 +51,10 @@ import { APP_STORE } from '../config';
     transition: background-color .55s ease;
   }
   .h-hero :global(.pw) { display: inline-grid; overflow: hidden; white-space: nowrap; padding-bottom: .1em; margin-bottom: -.1em; vertical-align: baseline; }
-  .h-hero :global(.pw > span) { grid-area: 1 / 1; white-space: nowrap; }
+  /* Pin each word to the left of the cell. The outgoing word keeps the grid track as wide as
+     itself until it is removed; with the centered mobile headline, the incoming word would
+     otherwise sit centered in that wide track, get clipped on the right, then jump. */
+  .h-hero :global(.pw > span) { grid-area: 1 / 1; white-space: nowrap; justify-self: start; text-align: left; }
   .h-hero :global(.pw-plain) { overflow: visible; }
   .h-hero :global(.pw-probe) { visibility: hidden; position: absolute; }
   .hero-text .lead { max-width: 480px; margin-top: clamp(16px, 2vw, 22px); }
