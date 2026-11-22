@@ -15,7 +15,21 @@ const TINTS: Tint[] = [
 
 const EVENT: Item[] = ['Gameday', 'Graduation', 'Class', 'Concert', 'Move-in day', 'Homecoming', 'Finals week', 'Tailgate'].map((word) => ({ word, after: 'parking' }));
 const DISTANCE: Item[] = ['4 minutes', '100 steps', '0.2 miles', '2 blocks', '3 minutes', '300 feet', '1 block', '5 minutes'].map((word) => ({ word, after: 'away' }));
-const CAMPUS: Item[] = ['UF', 'Ohio State', 'UT Austin', 'Michigan', 'UCLA', 'Georgia Tech', 'Alabama', 'USC', 'FSU', 'Penn State', 'NYU', 'Miami'].map((word) => ({ word }));
+// Southern schools first (expansion priority). UF is always shown first (it's in the markup).
+const CAMPUS: Item[] = [
+  'UF', 'FSU', 'UCF', 'UMiami', 'USF', 'FIU', 'Georgia Tech', 'Emory', 'UGA',
+  'UT Austin', 'Texas A&M', 'Rice', 'Alabama', 'Auburn', 'LSU', 'Ole Miss',
+  'Tennessee', 'Vanderbilt', 'Clemson', 'South Carolina',
+].map((word) => ({ word }));
+
+const rand = (n: number) => Math.floor(Math.random() * n);
+const shuffle = <T,>(a: T[]) => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = rand(i + 1);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
 
 // The highlight and the words share one soft curve: the pill grows while the new word
 // rises into it, and the text after the pill glides along. Lines never re-wrap (see Hero.astro).
@@ -69,21 +83,28 @@ export function initHeroWords() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const q = (k: string) => root.querySelector<HTMLElement>(`[data-pill="${k}"]`)!;
+  // Every slot starts on item 0 (what the markup shows). Each slot draws its next word from a
+  // shuffled bag, refilled when empty, never containing the word currently on screen.
+  const slot = (el: HTMLElement, items: Item[], afterEl: HTMLElement | null) => ({ el, items, afterEl, i: 0, bag: [] as number[] });
   const slots = [
-    { el: q('event'), items: EVENT, i: 0, afterEl: root.querySelector<HTMLElement>('[data-after="event"]') },
-    { el: q('campus'), items: CAMPUS, i: 0, afterEl: null as HTMLElement | null },
-    { el: q('dist'), items: DISTANCE, i: 0, afterEl: root.querySelector<HTMLElement>('[data-after="dist"]') },
+    slot(q('event'), EVENT, root.querySelector<HTMLElement>('[data-after="event"]')),
+    slot(q('dist'), DISTANCE, root.querySelector<HTMLElement>('[data-after="dist"]')),
+    slot(q('campus'), CAMPUS, null),
   ];
   // initial tints in markup: mint, sky, lime -> continue with the rest of the palette
   let tint = 3;
-  let step = 0;
   let timer = 0;
   let onScreen = true;
+  let last = -1;
 
   const change = () => {
-    const s = slots[step % slots.length];
-    step++;
-    s.i = (s.i + 1) % s.items.length;
+    // A random pill changes each time, but never the same pill twice in a row.
+    let n = rand(slots.length - (last < 0 ? 0 : 1));
+    if (last >= 0 && n >= last) n++;
+    last = n;
+    const s = slots[n];
+    if (!s.bag.length) s.bag = shuffle(s.items.map((_, k) => k).filter((k) => k !== s.i));
+    s.i = s.bag.pop()!;
     const item = s.items[s.i];
     swapText(s.el.querySelector<HTMLElement>('.pw')!, item.word);
     if (s.afterEl && item.after) swapText(s.afterEl, item.after);
