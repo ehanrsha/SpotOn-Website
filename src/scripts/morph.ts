@@ -45,7 +45,11 @@ export function initMorph() {
     return null;
   };
 
+  let lastW = 0, lastH = 0;
   const size = () => {
+    // iOS fires resize as the toolbar shows/hides; only redraw when the canvas really changed.
+    if (canvas.clientWidth === lastW && canvas.clientHeight === lastH) return;
+    lastW = canvas.clientWidth; lastH = canvas.clientHeight;
     const dpr = Math.min(devicePixelRatio || 1, 2);
     canvas.width = Math.round(canvas.clientWidth * dpr);
     canvas.height = Math.round(canvas.clientHeight * dpr);
@@ -70,7 +74,7 @@ export function initMorph() {
   const update = () => {
     ticking = false;
     const r = track.getBoundingClientRect();
-    const span = r.height - innerHeight;
+    const span = r.height - canvas.clientHeight;
     const p = Math.min(1, Math.max(0, -r.top / span));
     current = Math.round(p * (FRAMES - 1));
     // Headline rises and fades over the first quarter, as the first phone comes up.
