@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Analytics from '../components/Analytics.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESC } from '../config';
@@ -21,6 +22,7 @@ const og = new URL(ogImage, Astro.site).href;
     <link rel="icon" type="image/png" href="/media/logo.png" />
     <link rel="apple-touch-icon" href="/media/logo.png" />
     <link rel="preload" href="/fonts/Switzer-Semibold.otf" as="font" type="font/otf" crossorigin />
+    <Analytics />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SpotOn" />
     <meta property="og:title" content={title} />

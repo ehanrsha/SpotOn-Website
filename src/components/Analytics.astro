@@ -1,0 +1,91 @@
+---
+// Classic inline script on purpose. Astro must not bundle or rewrite it:
+// gtag() has to keep the `arguments` object, and the listener has to be
+// registered while the head is parsing so a new-tab App Store click cannot outrun it.
+import { APP_STORE, GA_MEASUREMENT_ID } from '../config';
+---
+
+<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+<script is:inline define:vars={{ measurementId: GA_MEASUREMENT_ID, appStoreUrl: APP_STORE }}>
+  var dataLayer = window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  window.gtag = gtag;
+  gtag('js', new Date());
+
+  var debugMode = false;
+  try {
+    if (typeof URLSearchParams === 'function') {
+      var flag = new URLSearchParams(window.location.search).get('debug_mode');
+      debugMode = flag === '1' || flag === 'true';
+    }
+  } catch (err) {}
+  if (debugMode) gtag('config', measurementId, { debug_mode: true });
+  else gtag('config', measurementId);
+
+  var appStoreKey = '';
+  try { appStoreKey = canonicalAppUrl(appStoreUrl); } catch (err) {}
+
+  function canonicalAppUrl(href) {
+    var u = new URL(href, window.location.href);
+    return u.protocol + '//' + u.host + u.pathname.replace(/\/+$/, '');
+  }
+
+  function isAppStoreLink(href) {
+    if (!appStoreKey) return false;
+    try { return canonicalAppUrl(href) === appStoreKey; }
+    catch (err) { return false; }
+  }
+
+  function linkLocation(anchor) {
+    var explicit = anchor.getAttribute('data-link-location');
+    if (explicit) return explicit;
+    if (anchor.closest('#nav, .nav')) return 'nav';
+    if (anchor.closest('#hero')) return 'hero';
+    if (anchor.closest('#listers')) return 'listers';
+    if (anchor.closest('#download')) return 'download';
+    if (anchor.closest('.ft-rows')) return 'footer';
+    if (anchor.closest('footer')) return 'footer-nav';
+    if (anchor.closest('.toc-cta')) return 'legal-toc';
+    var section = anchor.closest('section[id]');
+    if (section && section.id) return section.id;
+    return 'unknown';
+  }
+
+  // click and auxclick can both fire for one middle-click in some browsers.
+  var lastTrack = 0;
+  var lastKey = '';
+  function trackAppStoreClick(anchor) {
+    var locationName = linkLocation(anchor);
+    var url = anchor.href;
+    var key = locationName + '\n' + url;
+    var now = Date.now();
+    if (key === lastKey && now - lastTrack < 50) return;
+    lastTrack = now;
+    lastKey = key;
+    var text = anchor.getAttribute('aria-label') || anchor.textContent || '';
+    text = text.replace(/\s+/g, ' ').trim();
+    if (text.length > 100) text = text.slice(0, 100);
+    // Beacon survives the opener tab being backgrounded when target=_blank
+    // opens the App Store. Do not preventDefault — the new tab should open now.
+    gtag('event', 'app_store_click', {
+      link_location: locationName,
+      link_url: url,
+      link_text: text,
+      transport_type: 'beacon'
+    });
+  }
+
+  function onAppStoreActivate(event) {
+    if (event.type === 'click' && event.button !== 0) return;
+    if (event.type === 'auxclick' && event.button !== 1) return;
+    var node = event.target;
+    if (node && node.nodeType === 3) node = node.parentNode;
+    if (!node || !node.closest) return;
+    var anchor = node.closest('a[href]');
+    if (!anchor || !isAppStoreLink(anchor.href)) return;
+    trackAppStoreClick(anchor);
+  }
+
+  document.addEventListener('click', onAppStoreActivate, true);
+  document.addEventListener('auxclick', onAppStoreActivate, true);
+</script>
