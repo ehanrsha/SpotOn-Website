@@ -37,7 +37,7 @@ const rows = [
       <ul class="ft-rows">
         {rows.map((r) => (
           <li>
-            <a href={r.href} target={r.ext ? '_blank' : undefined} rel={r.ext ? 'noopener' : undefined}>
+            <a href={r.href} target={r.ext ? '_blank' : undefined} rel={r.ext ? 'noopener' : undefined} data-link-location={r.href === APP_STORE ? 'footer' : undefined}>
               <span>{r.label}</span><span class="arr" aria-hidden="true">→</span>
             </a>
           </li>
@@ -51,7 +51,7 @@ const rows = [
         <a href="/">Home</a>
         <a href="/terms">Terms</a>
         <a href="/privacy">Privacy</a>
-        <a href={APP_STORE} target="_blank" rel="noopener">Download</a>
+        <a href={APP_STORE} target="_blank" rel="noopener" data-link-location="footer-nav">Download</a>
       </nav>
       <div class="end"><p>© 2026 SpotOn</p><p>Parking near campus</p></div>
     </div>
